@@ -1,0 +1,44 @@
+{
+  "name": "places-ar",
+  "version": "1.0.0",
+  "description": "Vyhledávání bodů zájmu pomocí rozšířené reality ve Vašem prohlížeči!",
+  "author": "Vojtěch Sajdl <vojtech@sajdl.com> (https://sajdl.com)",
+  "license": "Apache-2.0",
+  "browserslist": ">1% and last 2 versions, not IE > 0, not IE_Mob > 0, not op_mini > 0,  not dead",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pryx/places-ar.git"
+  },
+  "main": "src/js/main.js",
+  "scripts": {
+    "build-prod": "webpack --env.prod --config webpack.config.js",
+    "build": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.6",
+    "babel-loader": "^7.1.5",
+    "browserify": "^16.2.2",
+    "compression-webpack-plugin": "^1.1.11",
+    "eslint": "^4.19.1",
+    "eslint-loader": "^2.1.0",
+    "geolocation-marker": "^2.0.5",
+    "uglify-es": "^3.3.9",
+    "uglifyjs-webpack-plugin": "^2.1.2",
+    "unused-webpack-plugin": "^2.0.0",
+    "webpack-cli": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.56",
+    "babel-preset-env": "^1.7.0",
+    "babelify": "^9.0.0",
+    "jsdoc-babel": "^0.5.0",
+    "stylelint": "^10.0.1",
+    "webpack": "^4.16.4"
+  },
+  "browserify": {
+    "transform": [
+      "browserify"
+    ]
+  }
+}

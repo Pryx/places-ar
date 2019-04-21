@@ -1,0 +1,48 @@
+{
+    "parser": "babel-eslint",
+	"parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "allowImportExportEverywhere": true
+    },
+    "globals":{
+        "google": true
+    },
+    "env": {
+        "browser": true,
+        "jquery": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "space-unary-ops": [
+        2, {
+          "words": true,
+          "nonwords": false
+        }],
+        "require-jsdoc": ["warn", {
+            "require": {
+                "FunctionDeclaration": true,
+                "MethodDefinition": true,
+                "ClassDeclaration": true,
+                "ArrowFunctionExpression": true,
+                "FunctionExpression": true
+            }
+        }],
+        "no-alert": ["warn"],
+        "curly":["warn"],
+        "no-console": ["warn", { "allow": ["warn", "error"] }],
+        "valid-jsdoc":["warn",{"matchDescription": ".+", "requireParamDescription": true}],
+        "space-infix-ops": ["warn"],
+        "max-len": ["error",{ "code": 130 }],
+        "space-in-parens": ["warn", "never"],
+        "block-spacing": ["warn", "always"],
+        "comma-spacing": ["warn", { "before": false, "after": true }],
+        "no-eval": "error",
+        "no-empty": "warn",
+        "keyword-spacing": "warn",
+        "no-whitespace-before-property": "error",
+        "no-unused-vars": ["warn", { "vars": "local", "args": "after-used", "ignoreRestSiblings": false }],
+        "no-case-declarations": ["warn"]
+    }
+}
