@@ -6,7 +6,8 @@
         "allowImportExportEverywhere": true
     },
     "globals":{
-        "google": true
+        "google": true,
+        "GeolocationMarker": true
     },
     "env": {
         "browser": true,

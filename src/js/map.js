@@ -1,5 +1,5 @@
 import { Location } from 'location';
-import { GeolocationMarker } from 'geolocation-marker';
+import _ from 'geolocation-marker';
 
 export class Map{
     constructor(currentPosition, callback){
@@ -68,7 +68,7 @@ export class Map{
 
         console.log(GeolocationMarker);
         this.clickHandler = new ClickEventHandler(this.map, origin);
-        //this.geoMarker = new GeolocationMarker(this.map);
+        this.geoMarker = new GeolocationMarker(this.map);
 
         $("body").on("click", "#infowindow-content .btn", function (e) {
             $("body").removeClass("nav-switched");
