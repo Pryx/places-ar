@@ -1,4 +1,4 @@
-import { Position } from 'position';
+import { PositionService } from 'position-service';
 
 window.debug = false;
 
@@ -8,40 +8,44 @@ window.debug = false;
  * like the Compass, Settings or Map.
  */
 class Main {
+    /**
+     * Constructor creates new Position object and initializes the app.
+     */
     constructor(){
-        this.position = new Position();
-        window.addEventListener("deviceorientationabsolute", this.position.listenerSwitch);
-        window.addEventListener("deviceorientation", this.position.deviceOrientationChange);
-        document.addEventListener("onfullscreenchange", this.fullScreenChange);
+        this.positionService = new PositionService();
         this.initVideo();
     }
 
+    /**
+     * Binds event handlers to events for basic GUI operations.
+     * @returns {undefined}
+     */
     initEvents(){
-        $("#open-nav").click(function (e) {
-            $(this).toggleClass("animate");
-            $("#navigation").toggleClass("hide");
-        });
+        document.addEventListener("onfullscreenchange", this.fullScreenChange);
 
-        $(".back").click(function (e) {
-            e.preventDefault();
-            $("body").removeClass("nav-switched");
-            $(this).closest(".nav-section").addClass("hide");
+        document.getElementById("open-settings").addEventListener("click", function (e) {
+            this.classList.toggle("animate");
+            document.getElementById("navigation").classList.toggle("hide");
         });
+        
+        let elements = document.querySelectorAll(".nav-switch");
+        elements.forEach(element => {
+            element.addEventListener("click", function (e) {
+                e.preventDefault();
+                if (!document.querySelector("body").classList.contains("nav-switched")) {
+                    document.querySelector("body").classList.add("nav-switched");
+                }
 
-        $(".nav-switch").click(function (e) {
-            e.preventDefault();
-            if (!$("body").hasClass("nav-switched")) {
-                $("body").addClass("nav-switched");
-            }
-            let href = $(this).attr("href");
-            $(href).removeClass("hide");
+                let href = this.getAttribute("href");
+                document.querySelector(href).classList.remove("hide");
+            });
         });
 
         /**
         * Click handler for the fullscreen button. Uses the JavaScript
         * FullScreen API. Basic support is present in most major browsers.
         */
-        $("#open-fullscreen").click(function (e) {
+        document.getElementById("open-fullscreen").addEventListener("click", function () {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
             } else {
@@ -68,10 +72,11 @@ class Main {
      * This function initializes the video stream from the environment-facing
      * camera. Uses the getUserMedia/Stream API present in all current browsers.
      * Uses quality set in app settings. 
+     * @returns {undefined}
      */
-    //TODO: Screen aspect ratio
-    //TODO: Save & load settings
     initVideo() {
+        //TODO: Screen aspect ratio
+        //TODO: Save & load settings
         let video = document.getElementById('video');
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -82,9 +87,9 @@ class Main {
                 .then(stream => video.srcObject = stream)
                 .then(() => new Promise(resolve => video.onloadedmetadata = resolve))
                 .then(() => {
-                    $(video).show();
+                    video.style.display = 'block';
                     //TODO: Wizard
-                    $("#insufficient-permissions").hide();
+                    document.getElementById('insufficient-permissions').style.display = 'none'
                 })
                 .catch(e => {
                     console.error("Couldn't gain access to camera!");
@@ -98,12 +103,14 @@ class Main {
     /**
      * fullScreenChange handles fullscreen events and updates
      * the fullscreen toggle button accordingly.
+     * @returns {undefined}
      */
     fullScreenChange() {
+        let element = document.getElementById("open-fullscreen");
         if (document.fullscreenElement) {
-            jQuery("#open-fullscreen").addClass("on");
+            element.classList.add("on");
         } else {
-            jQuery("#open-fullscreen").removeClass("on");
+            element.classList.remove("on");
         }
     }
 }

@@ -26,7 +26,7 @@ define('PLACES_AR_VER', '0.9');
   <!-- Add your site or application content here -->
   <main id="main">
     <div id="compass">
-        <div id="compass-slider">
+        <div class="compass-slider">
             <div class="compass-segment">
                 <div class="compass-mark">N</div>
             </div>
@@ -42,11 +42,16 @@ define('PLACES_AR_VER', '0.9');
             </div>
         </div>
     </div>
-    
-    <div id="open-nav" class="hamburger">
+    <div id="close-all" class="hamburger animate">
       <div class="bar bar1"></div>
       <div class="bar bar2"></div>
       <div class="bar bar3"></div>
+    </div>
+    <div id="open-settings" class="hamburger">
+      <img src="img/gear.svg" alt="Settings">
+    </div>
+    <div id="open-map" class="hamburger">
+      <img src="img/marker.svg" alt="Map">
     </div>
     <div id="open-fullscreen" class="fullscreen">
       <div class="bar top-left-1"></div>
@@ -58,8 +63,9 @@ define('PLACES_AR_VER', '0.9');
       <div class="bar bottom-right-1"></div>
       <div class="bar bottom-right-2"></div>
     </div>
-    <section id="notices hide">
-      
+    <section id="wizard" class="hide">
+    </section>
+    <section id="wizard-relative" class="hide">
     </section>
     <section id="place-info">No place selected yet</section>
     <section class="navigation hide" id="navigation">
@@ -112,10 +118,6 @@ define('PLACES_AR_VER', '0.9');
       </div>
     </div>
   </main>
-  <!-- TODO: Remove -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
-  <!-- /TODO -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIJ0abeCpJQ909O8lEWj6lfpRngYtgFOM&libraries=places&callback=initMap"></script>
   <script src="js/places-ar.min.js?ver=<?php echo PLACES_AR_VER;?>"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:400,700&amp;subset=latin-ext" rel="stylesheet">

@@ -7,7 +7,7 @@ define get_build_date
 endef
 
 define write_version
-	@ sed -i "/PLACES_AR_VER/c\    define('PLACES_AR_VER', '${VERSION}');" $(BUILD_FOLDER)/index.php
+	@ sed -i "/define('PLACES_AR_VER/c\    define('PLACES_AR_VER', '${VERSION}');" $(BUILD_FOLDER)/index.php
 endef
 
 define clean
@@ -36,6 +36,7 @@ deploy:
 	@ npm config set loglevel warn
 	@ npm run build
 	@ cp -r src/* $(BUILD_FOLDER)
+	@ $(write_version)
 	@ php -f ./build_tools/deployment.phar plugin.deploy
 	@ rm -rf $(BUILD_FOLDER)
 	@ tput setaf 3

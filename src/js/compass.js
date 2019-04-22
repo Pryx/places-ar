@@ -1,8 +1,19 @@
+/**
+ * The compass class encapsulates logic around rendering the actual Compass
+ * based on device orientation data.
+ */
 export class Compass {
+    /**
+     * Creates a compass from a HTML element
+     * @param {Element} html HTML element
+     */
     constructor(html) {
         this.html = html;
-        this.slider = html.querySelector("#compass-slider");
-
+        this.slider = html.querySelector(".compass-slider");
+        /**
+         * Gets slider width
+         * @returns {Number} width
+         */
         const setSliderWidth = () => this.WIDTH = this.slider.getBoundingClientRect().width;
 
         setSliderWidth();
@@ -15,11 +26,21 @@ export class Compass {
         this.leftside = true;
     }
 
+    /**
+     * Sets rotation of the compass
+     * @param {Number} angle rotation (Degrees)
+     * @returns {undefined}
+     */
     setAngle(angle) {
         this.deg = angle;
         this.render();
     }
 
+    /**
+     * Sets the POI marker position on the compass
+     * @param {Number} angle position (Degrees)
+     * @returns {undefined}
+     */
     setMarkerPosition(angle) {
         angle -= 135;
         if (angle < 0) {
@@ -42,8 +63,14 @@ export class Compass {
         }
     }
 
+    /**
+     * Renders the POI marker on the compass. Offset is used in case compass is near 0°
+     * @param {Number} angle position (Degrees)
+     * @param {Number} offset offset (Degrees)
+     * @returns {undefined}
+     */
     renderMarker(angle, offset) {
-        let precision = Math.pow(10, 3); // přesnost 4 desetinná místa
+        let precision = Math.pow(10, 3);
 
         let degReal = angle % 360;
         degReal += offset;
@@ -54,8 +81,12 @@ export class Compass {
         marker.style.display = 'block';
     }
 
+    /**
+     * Renders the compass
+     * @returns {undefined}
+     */
     render() {
-        let precision = Math.pow(10, 3); // přesnost 4 desetinná místa
+        let precision = Math.pow(10, 3);
 
         let degReal = this.deg % 360;
         let offset = Math.floor((-1 * degReal / 90 * this.WIDTH) * precision) / precision;

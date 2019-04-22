@@ -1,9 +1,20 @@
 import { Location } from 'location';
+// Disabled because the package doesn't export GeolocationMarker, so can't use that
+// eslint-disable-next-line no-unused-vars
 import _ from 'geolocation-marker';
 
+/**
+ * This class encapsulates Google Maps and everything related to it. 
+ * Meant to make it easier in case we decide to go with another provider.
+ */
 export class Map{
-    constructor(currentPosition, callback){
-        let origin = { lat: currentPosition.latitude, lng: currentPosition.longtitude };
+    /**
+     * Constructor initializes map from the map provider (Google Maps) and ad
+     * @param {Function} callback Callback for when user select different POI
+     */
+    constructor(callback){
+        let origin = {
+            lat: 50.0755381, lng: 14.4378005 };
 
         this.map = new google.maps.Map(document.getElementById('map'), {
             zoom: 14,
@@ -11,6 +22,12 @@ export class Map{
         });
         let temporary = new Location();
 
+        /**
+         * Creates new ClickEventHandler for Google Maps
+         * @param {google.maps.Map} map Google Map instance
+         * @param {Object} origin Location
+         * @returns {undefined}
+         */
         let ClickEventHandler = function (map, origin) {
             this.origin = origin;
             this.map = map;
@@ -66,20 +83,24 @@ export class Map{
             });
         };
 
-        console.log(GeolocationMarker);
         this.clickHandler = new ClickEventHandler(this.map, origin);
         this.geoMarker = new GeolocationMarker(this.map);
 
-        $("body").on("click", "#infowindow-content .btn", function (e) {
-            $("body").removeClass("nav-switched");
-            $("#open-nav").removeClass("animate");
-            $(this).closest(".nav-section").addClass("hide");
-            $("#navigation").addClass("hide");
+        //TODO: This is going to have to change when the buttons split
+        document.querySelector("#infowindow-content .btn").addEventListener("click", function () {
+            document.querySelector("body").classList.remove("nav-switched");
+            document.getElementById("#open-nav").classList.remove("animate");
+            this.closest(".nav-section").classList.add("hide");
+            document.getElementById("#navigation").classList.add("hide");
             callback(temporary);
         }); 
     }
     
-
+    /**
+     * Moves the center of the map to keep track of the user
+     * @param {Position} center Position
+     * @returns {undefined}
+     */
     setCenter(center){
         this.map.setCenter(center);
     }

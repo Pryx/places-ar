@@ -205,6 +205,12 @@ body .hidden {
   z-index: 50
 }
 
+#open-map{
+  top: 1em;
+  right: 1em;
+  left: auto;
+}
+
 .hamburger .bar {
   width: 35px;
   height: 5px;
@@ -225,7 +231,7 @@ body .hidden {
   transform: rotate(45deg) translate(-8px, -8px);
 }
 
-#open-nav {
+.hamburger {
   background: rgba(0,0,0,.8);
   transition: transform 0.4s ease-in-out;
   transform: translate3d(0,0,0)
@@ -549,7 +555,6 @@ html{
     height: 100%;
 }
 
-.nav-switched #open-nav,
 .nav-switched #open-fullscreen{
     transform: translate3d(-50vw, 0, 0)
 }
@@ -616,4 +621,19 @@ html{
 
 .btn, .back{
     cursor: pointer
+}
+
+.hamburger img
+{
+    height: 39px;
+    margin: 0 -2px;
+}
+#close-all.hide{
+    z-index: -5;
+    opacity: 0;
+}
+#close-all{
+    opacity: 1;
+    z-index: 999;
+    translate: all 500ms ease-in-out
 }
