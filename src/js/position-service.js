@@ -29,8 +29,8 @@ export class PositionService{
      * @see {Location}
      */
     constructor(){
-        window.addEventListener("deviceorientationabsolute", this.listenerSwitch);
-        window.addEventListener("deviceorientation", this.deviceOrientationChange);
+        window.addEventListener("deviceorientationabsolute", () => this.listenerSwitch());
+        window.addEventListener("deviceorientation", (e) => this.deviceOrientationChange(e));
 
         this.compass = new Compass(document.getElementById("compass"));
         
@@ -114,7 +114,7 @@ export class PositionService{
                 this.relativeAdjust = position.coords.heading;
 
                 if (this.usefulLocationEventCount > 3) {
-                    this.relativeAdjust = this.relativeAdjust - this.current.deg - 90; //+90 because of landscape adjust :)
+                    this.relativeAdjust = this.relativeAdjust - this.current.bearing - 90; //+90 because of landscape adjust :)
                     this.waitForFix = false;
                 }
             }
@@ -245,20 +245,20 @@ export class PositionService{
             return;
         }
         //document.getElementById("place-info").innerHTML = `${alpha} ${adjust} ${this.relativeAdjust}`;
-        this.current.deg = alpha + adjust + this.relativeAdjust;
+        this.current.bearing = alpha + adjust + this.relativeAdjust;
 
         if (gamma > 0) {
-            this.current.deg += 180;
+            this.current.bearing += 180;
         }
 
-        while (this.current.deg < 0) {
-            this.current.deg += 360;
+        while (this.current.bearing < 0) {
+            this.current.bearing += 360;
         }
 
-        if (this.current.deg > 360) {
-            this.current.deg = this.current.deg % 360;
+        if (this.current.bearing > 360) {
+            this.current.bearing = this.current.bearing % 360;
         }
 
-        this.compass.setAngle(360 - this.current.deg);
+        this.compass.setAngle(360 - this.current.bearing);
     }
 }

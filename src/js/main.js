@@ -97,8 +97,10 @@ class Main {
         let video = document.getElementById('video');
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-
-            let settings = { video: { width: 1920, height: 1080, facingMode: "environment" } };
+            let height = screen.height * window.devicePixelRatio;
+            let width = screen.width * window.devicePixelRatio;
+            console.log(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}`);
+            let settings = { video: { width: width, height: height, facingMode: "environment" } };
 
             navigator.mediaDevices.getUserMedia(settings)
                 .then(stream => video.srcObject = stream)

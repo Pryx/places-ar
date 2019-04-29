@@ -232,7 +232,9 @@ define('PLACES_AR_VER', '0.9');
         </main>
       </section>
     </section>
-    <video id="video" width="100%" height="100%" autoplay class="hide"></video>
+    <div class="video-container">
+      <video id="video" width="100%" height="100%" autoplay class="hide"></video>
+    </div>
     <div id="insufficient-permissions">
       <div class="vertically-center">
         <h2>This app needs permission to use your location & camera to work.</h2>
