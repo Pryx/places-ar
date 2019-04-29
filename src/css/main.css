@@ -241,6 +241,37 @@ body .hidden {
     display: none;
 }
 
+.wizard.hide{
+    visibility: hidden;
+    opacity: 0;
+    display: block;
+}
+
+.wizard{
+    opacity: 1;
+    visibility: visible;
+    transition: all 250ms ease-in-out;
+}
+
+.slide.hide{
+    display: block;
+    transform: translateX(-100%);
+}
+
+.wizard .slide:not(.hide) ~ .slide{
+    transform: translateX(100%);
+}
+/*
+body .wizard .slide.hide.slideleft{
+    transform: translateX(100%);
+
+}*/
+
+.slide{
+    transform: translateX(0);
+    transition: transform 250ms cubic-bezier(0.25, 0.8, 0.25, 1)
+}
+
 body .navigation{
     display: block;
     position: fixed;
@@ -343,6 +374,7 @@ html{
     display: block;
     margin: 0 auto;
     overflow: hidden;
+    z-index: 99;
 }
 
 #compass.isrelative{
@@ -555,10 +587,6 @@ html{
     height: 100%;
 }
 
-.nav-switched #open-fullscreen{
-    transform: translate3d(-50vw, 0, 0)
-}
-
 .nav-section{
     transform: translate3d(0,0,0);
     transition: transform .4s ease-in-out
@@ -738,7 +766,7 @@ html{
   min-height: 100%; 
 
   /* Setting width & height to auto prevents the browser from stretching or squishing the video */
-  width: auto;
+  width: 100%;
   height: auto;
 
   /* Center the video */
@@ -748,3 +776,13 @@ html{
   transform: translate(-50%,-50%);
 }
 /*END*/
+.hamburger,
+#compass{
+    opacity: 1;
+    transition: opacity 250ms ease-in-out
+}
+
+.hide-controls .hamburger,
+.hide-controls #compass{
+    opacity: 0!important;
+}

@@ -29,8 +29,10 @@ export class PositionService{
      * @see {Location}
      */
     constructor(){
-        window.addEventListener("deviceorientationabsolute", () => this.listenerSwitch());
-        window.addEventListener("deviceorientation", (e) => this.deviceOrientationChange(e));
+        this.switchHandler = () => this.listenerSwitch();
+        this.orientationHandler = (e) => this.deviceOrientationChange(e);
+        window.addEventListener("deviceorientationabsolute", this.switchHandler);
+        window.addEventListener("deviceorientation", this.orientationHandler);
 
         this.compass = new Compass(document.getElementById("compass"));
         
@@ -47,7 +49,6 @@ export class PositionService{
         this.waitForFix = true;
         this.current = new Location();
         this.selected = new Location();
-        this.map = new Map((location) => this.confirmSelect(location));
     }
 
     /**
@@ -60,6 +61,7 @@ export class PositionService{
             maximumAge: window.localStorage.getItem("geoMaxAge"), //Get from settings
             timeout: 60000 //1 minute
         });
+        this.map = new Map((location) => this.confirmSelect(location));
     }
 
     /**
@@ -69,11 +71,11 @@ export class PositionService{
      */
     listenerSwitch() {
         document.getElementById("compass").classList.add("isAbsoluteEvent");
-        window.removeEventListener("deviceorientationabsolute", this.listenerSwitch);
-        window.removeEventListener("deviceorientation", this.deviceOrientationChange);
+        window.removeEventListener("deviceorientationabsolute", this.switchHandler);
+        window.removeEventListener("deviceorientation", this.orientationHandler);
         this.waitForFix = false;
         this.relativeAdjust = 0;
-        window.addEventListener("deviceorientationabsolute", this.deviceOrientationChange);
+        window.addEventListener("deviceorientationabsolute", this.orientationHandler);
     }
 
     /**

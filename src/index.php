@@ -178,10 +178,9 @@ define('PLACES_AR_VER', '0.9');
             <h2>Calibration complete</h2>
             <p>
               Calibration is now complete and we should have a pretty good approximation of the North. 
-              In case it is incorrect, you can rerun the calibration any time from the settings.
             </p>
             <p>
-              Click finish to proceed.
+              Click finish to proceed to the app.
             </p>
           </div>
           <a class="btn btn-next finish" href="#finish">Finish</a>
@@ -241,7 +240,7 @@ define('PLACES_AR_VER', '0.9');
       </div>
     </div>
   </main>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIJ0abeCpJQ909O8lEWj6lfpRngYtgFOM&libraries=places&callback=initMap"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIJ0abeCpJQ909O8lEWj6lfpRngYtgFOM&libraries=places"></script>
   <script src="js/places-ar.min.js?ver=<?php echo PLACES_AR_VER;?>"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:400,700&amp;subset=latin-ext" rel="stylesheet">
 </body>

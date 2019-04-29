@@ -22,7 +22,7 @@ class Main {
             // Old browser... Show warning and crash.
         }
         this.runSetupWizard();
-        this.initVideo();
+        //this.initVideo();
     }
 
     /**
@@ -31,6 +31,11 @@ class Main {
      */
     runSetupWizard(){
         this.setupWizard = new Wizard("#wizard", true, this);
+        
+        if (!this.setupWizard.wasRun){
+            this.initVideo();
+            this.positionService.initGeolocationWatcher();
+        }
     }
 
     /**
@@ -89,11 +94,12 @@ class Main {
      * This function initializes the video stream from the environment-facing
      * camera. Uses the getUserMedia/Stream API present in all current browsers.
      * Uses quality set in app settings. 
-     * @returns {undefined}
+     * @returns {Boolean} Whether initialization was successful
      */
     initVideo() {
         //TODO: Screen aspect ratio
         //TODO: Save & load settings
+        let success = true;
         let video = document.getElementById('video');
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -107,17 +113,18 @@ class Main {
                 .then(() => new Promise(resolve => video.onloadedmetadata = resolve))
                 .then(() => {
                     video.style.display = 'block';
-                    //TODO: Wizard
-                    document.getElementById('insufficient-permissions').style.display = 'none'
+                    document.getElementById("insufficient-permissions").classList.add("hide");
                 })
                 .catch(e => {
                     console.error("Couldn't gain access to camera!");
+                    success = false;
                     //TODO: Re-run wizard
                 });
         } else {
             console.warn("No media devices found!");
             //TODO Shown error
         }
+        return success;
     }
     /**
      * fullScreenChange handles fullscreen events and updates

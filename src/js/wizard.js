@@ -6,34 +6,59 @@ export class Wizard{
      * 
      */
     constructor(selector, runOnce, caller){
+        this.selector = selector;
         this.baseElement = document.querySelector(selector);
         this.runOnce = runOnce;
         this.caller = caller;
         if (runOnce && window.localStorage.getItem(`wizard${selector}`)){
-            return null;
+            this.wasRun = false;
+            return;
         }
 
+        this.wasRun = true;
         this.baseElement.classList.remove("hide");
 
         let elements = document.querySelectorAll(`${selector} .btn-next`);
         this.slide = 0;
         let wizard = this;
 
+        document.querySelector("body").classList.add("hide-controls");
+
         elements.forEach(element => {
             element.addEventListener("click", function (e) {
                 let href = this.getAttribute("href");
-                console.log(href);
+
                 if (href == "#finish")
                 {
-                    console.log("EEE");
                     wizard.finished();
                     return false;
                 }
 
+                let slide = this.closest(".slide");         
+
                 wizard.slide++;
-                this.closest(".slide").classList.add("hide");
-                console.log(`.slide-nr${wizard.slide}`);
-                document.querySelector(`.slide-nr${wizard.slide}`).classList.remove("hide");
+                slide.classList.add("hide");
+
+                let nextSlide = document.querySelector(`.slide-nr${wizard.slide}`);       
+
+                nextSlide.classList.remove("hide");
+
+                //wizard.vibrateAlert(0);
+
+                let action = nextSlide.getAttribute("data-action");
+
+                switch (action) {
+                    case "camera":
+                        caller.initVideo();
+                        break;
+
+                    case "location":
+                        caller.positionService.initGeolocationWatcher();
+                        break;
+
+                    default:
+                        break;
+                }
             });
         });
     }
@@ -42,10 +67,11 @@ export class Wizard{
      * 
      */
     finished(){
-        /*if (this.runOnce){
-            window.localStorage.setItem(`wizard${selector}`, true);
-        }*/
-        console.log(this.baseElement);
+        if (this.runOnce){
+            window.localStorage.setItem(`wizard${this.selector}`, true);
+        }
+        
+        document.querySelector("body").classList.remove("hide-controls");
         this.baseElement.classList.add("hide");
     }
 
