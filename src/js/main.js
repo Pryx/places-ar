@@ -1,4 +1,6 @@
-import { PositionService } from 'position-service';
+import { PositionService } from './position-service';
+import { Settings } from './settings';
+import { Wizard } from './wizard';
 
 window.debug = false;
 
@@ -13,7 +15,22 @@ class Main {
      */
     constructor(){
         this.positionService = new PositionService();
+        if (typeof (Storage) !== "undefined") {
+            this.settings = new Settings();
+        } else {
+            this.settings = null;
+            // Old browser... Show warning and crash.
+        }
+        this.runSetupWizard();
         this.initVideo();
+    }
+
+    /**
+     * Runs setup wizard if setup hasn't been completed yet
+     * @returns {undefined}
+     */
+    runSetupWizard(){
+        this.setupWizard = new Wizard("#wizard", true, this);
     }
 
     /**

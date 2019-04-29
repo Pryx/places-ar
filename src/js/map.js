@@ -1,4 +1,4 @@
-import { Location } from 'location';
+import { Location } from './location';
 // Disabled because the package doesn't export GeolocationMarker, so can't use that
 // eslint-disable-next-line no-unused-vars
 import _ from 'geolocation-marker';

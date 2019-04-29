@@ -1,6 +1,6 @@
-import { Compass } from 'compass';
-import { Location } from 'location';
-import { Map } from 'map';
+import { Compass } from './compass';
+import { Location } from './location';
+import { Map } from './map';
 /**
  * This makes it possible to convert number from degrees to radians.
  * @returns {Number} Degrees converted to radians
@@ -48,13 +48,17 @@ export class PositionService{
         this.current = new Location();
         this.selected = new Location();
         this.map = new Map((location) => this.confirmSelect(location));
-        /**
-         * Geolocation watcher initialization. Uses frequency set in settings.
-         */
+    }
+
+    /**
+     * Initializes the geolocation watcher. Uses Max Age set in settings.
+     * @returns {undefined}
+     */
+    initGeolocationWatcher(){
         navigator.geolocation.watchPosition((e) => this.locationUpdate(e), this.locationUpdateFail, {
-            enableHighAccuracy: true,
-            maximumAge: 10000,
-            timeout: 90000
+            enableHighAccuracy: true, //We need high accuracy to be precise enough
+            maximumAge: window.localStorage.getItem("geoMaxAge"), //Get from settings
+            timeout: 60000 //1 minute
         });
     }
 
