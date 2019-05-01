@@ -43,7 +43,7 @@ class Main {
      * @returns {undefined}
      */
     initEvents(){
-        document.addEventListener("onfullscreenchange", this.fullScreenChange);
+        document.addEventListener("fullscreenchange", this.fullScreenChange);
 
         document.getElementById("open-settings").addEventListener("click", function (e) {
             this.classList.toggle("animate");

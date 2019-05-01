@@ -253,6 +253,12 @@ define('PLACES_AR_VER', '0.9');
       </div>
     </div>
   </main>
+  <div id="rotate_screen">
+    <div class="rotate-wrapper">
+      <h2>Please rotate your screen to landscape mode</h2>
+      <img src="img/rotate.svg" alt="rotate">
+    </div>
+  </div>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIJ0abeCpJQ909O8lEWj6lfpRngYtgFOM&libraries=places"></script>
   <script src="js/places-ar.min.js?ver=<?php echo PLACES_AR_VER;?>"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:400,700&amp;subset=latin-ext" rel="stylesheet">
