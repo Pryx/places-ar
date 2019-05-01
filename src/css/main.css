@@ -326,12 +326,6 @@ html{
     font-size: 1.2em
 }
 
-.btn.btn-success{
-    background: #43a047;
-    border: 1px solid #00701a;
-    color: white;
-}
-
 #compass {
     position: fixed;
     left: 50%;
@@ -813,7 +807,7 @@ html{
     color: #222;
     text-align: center;
     position: fixed;
-    bottom: 1em;
+    bottom: .5em;
     left: 50%;
     transform: translateX(-50%);
     font-size: 2em;
@@ -847,3 +841,17 @@ html{
     height: 100%;
     width: 100%
 }
+
+.btn.btn-success {
+    background: #4CAF50;
+    border: 1px solid #43A047;
+    color: white;
+}
+
+.btn.btn-success:hover,
+.btn.btn-success:active {
+    background: #43A047;
+    border: 1px solid #388E3C;
+    color: white;
+}
+

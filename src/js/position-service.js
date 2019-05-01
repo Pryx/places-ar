@@ -126,7 +126,7 @@ export class PositionService{
                 }
             }
 
-            if (!document.querySelector("body").classList.contains("nav-switched")) {
+            if (!document.querySelector("body").classList.contains("hide-controls")) {
                 this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
             }
         }
@@ -140,7 +140,7 @@ export class PositionService{
         let bearing = this.absBearing(this.selected, this.current);
 
         document.getElementById("place-info").innerHTML = `<span id="location-name">${this.selected.name}</span><br>
-            <span id="place-distance">${this.formatDistance(distance)} (± ${this.formatDistance(this.current.acc)} )</span>`;
+            <span id="place-distance">${this.formatDistance(distance)} (± ${this.formatDistance(this.current.accuracy)} )</span>`;
 
         this.compass.setMarkerPosition(bearing);
     }

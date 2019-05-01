@@ -236,7 +236,7 @@ define('PLACES_AR_VER', '0.9');
         <img id="place-icon" src="" height="24" width="24">
         <span id="place-name" class="title"></span><br>
         <span id="place-address"></span>
-        <div class="btn btn-success">OK</div>
+        <div class="btn btn-success">Show me!</div>
       </div>
       <section class="full-wrap">
         <h2>Select a point of interest</h2>

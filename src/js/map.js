@@ -54,8 +54,8 @@ export class Map{
             let me = this;
             this.placesService.getDetails({ placeId: placeId }, function (place, status) {
                 if (status === 'OK') {
-                    temporary.lng = place.geometry.location.lng();
-                    temporary.lat = place.geometry.location.lat();
+                    temporary.longitude = place.geometry.location.lng();
+                    temporary.latitude = place.geometry.location.lat();
                     temporary.name = place.name;
 
                     me.infowindow.close();
@@ -89,10 +89,9 @@ export class Map{
 
         //TODO: This is going to have to change when the buttons split
         document.querySelector("#infowindow-content .btn").addEventListener("click", function () {
-            document.querySelector("body").classList.remove("nav-switched");
-            document.getElementById("#open-nav").classList.remove("animate");
-            this.closest(".nav-section").classList.add("hide");
-            document.getElementById("#navigation").classList.add("hide");
+            document.querySelector("body").classList.remove("hide-controls");
+            document.getElementById("close-all").classList.add("hide");
+            document.getElementById("place-select").classList.add("hide");
             callback(temporary);
         }); 
     }
