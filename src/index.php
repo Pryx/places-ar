@@ -23,6 +23,20 @@ define('PLACES_AR_VER', '0.9');
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
   <![endif]-->
 
+  <noscript>
+    <section id="nojs" class="wizard">
+      <div class="wizard-wrapper">
+        <div class="slide slide-nr0">
+          <div class="padded-wrap">
+            <h2>Javascript disabled!</h2>
+            <p>This app needs javascript to work properly. Please enable it and try again.</p>
+            <a class="btn btn-next error" href="./">Reload</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </noscript>
+
   <!-- Add your site or application content here -->
   <main id="main">
     <div id="compass">
@@ -63,6 +77,28 @@ define('PLACES_AR_VER', '0.9');
       <div class="bar bottom-right-1"></div>
       <div class="bar bottom-right-2"></div>
     </div>
+    <section id="permission_error" class="wizard hide">
+      <div class="wizard-wrapper">
+        <div class="slide slide-nr0">
+          <div class="padded-wrap">
+            <h2>Permsission error!</h2>
+            <p>There was an error while getting all the neccessary permissions. Please reload the page and try again!</p>
+            <a class="btn btn-next error" href="./">Reload</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="no_media" class="wizard hide">
+      <div class="wizard-wrapper">
+        <div class="slide slide-nr0">
+          <div class="padded-wrap">
+            <h2>No media device found!</h2>
+            <p>We couldn't gain access to your camera. Is something blocking the camera from being used?</p>
+            <a class="btn btn-next error" href="./">Reload</a>
+          </div>
+        </div>
+      </div>
+    </section>
     <section id="wizard" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -85,12 +121,8 @@ define('PLACES_AR_VER', '0.9');
               First we need access to your camera. Without a camera feed, this cannot be a AR app.
               <img class="wizard-icon-big" src="img/camera.svg" alt="camera">
             </p>
-            <p class="hidden error">
-              Something went wrong. Did you give us the permission we needed?
-            </p>
           </div>
           <a class="btn btn-next" href="#next">Next</a>
-          <a class="btn btn-next reload hidden" href="#reload" onclick="Location​.reload(true)">Restart wizard</a>
         </div>
         <div class="slide slide-nr2 hide" data-action="location">
           <div class="padded-wrap">
@@ -100,12 +132,8 @@ define('PLACES_AR_VER', '0.9');
               that makes our job impossible.
               <img class="wizard-icon-big" src="img/map-pin.svg" alt="Map">
             </p>
-            <p class="hidden error">
-              Something went wrong. Did you give us the permission we needed?
-            </p>
           </div>
           <a class="btn btn-next" href="#next">Next</a>
-          <a class="btn btn-next reload hidden" href="#reload" onclick="Location​.reload(true)">Restart wizard</a>
         </div>
         <div class="slide slide-nr3 hide">
           <div class="padded-wrap">

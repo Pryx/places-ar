@@ -94,12 +94,11 @@ class Main {
      * This function initializes the video stream from the environment-facing
      * camera. Uses the getUserMedia/Stream API present in all current browsers.
      * Uses quality set in app settings. 
-     * @returns {Boolean} Whether initialization was successful
+     * @returns {undefined}
      */
     initVideo() {
         //TODO: Screen aspect ratio
         //TODO: Save & load settings
-        let success = true;
         let video = document.getElementById('video');
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -116,15 +115,17 @@ class Main {
                     document.getElementById("insufficient-permissions").classList.add("hide");
                 })
                 .catch(e => {
-                    console.error("Couldn't gain access to camera!");
-                    success = false;
+                    console.error("Couldn't gain access to camera!", e);
+                    Wizard.hideAllWizards();
+                    new Wizard("#permission_error");
                     //TODO: Re-run wizard
                 });
         } else {
             console.warn("No media devices found!");
+            Wizard.hideAllWizards();
+            new Wizard("#no_media");
             //TODO Shown error
         }
-        return success;
     }
     /**
      * fullScreenChange handles fullscreen events and updates

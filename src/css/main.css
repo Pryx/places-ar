@@ -728,6 +728,14 @@ html{
     max-width: 100%;
 }
 
+#no_media .wizard-wrapper,
+#permission_error .wizard-wrapper,
+#nojs .wizard-wrapper{
+    height: 250px;
+    max-height: 100%;
+    max-width: 100%;
+}
+
 .slide {
     position: absolute;
     bottom: 0;
@@ -749,6 +757,13 @@ html{
 }
 .btn.btn-next.finish {
     background: #4CAF50;
+}
+
+.btn.btn-next.error:hover {
+    background: #E53935;
+}
+.btn.btn-next.error {
+    background: #F44336;
 }
 
 /* CREDIT START: https://stackoverflow.com/questions/36949747/make-video-fit-100-with-any-screen-resolution */

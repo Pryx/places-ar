@@ -28,7 +28,7 @@ export class Wizard{
             element.addEventListener("click", function (e) {
                 let href = this.getAttribute("href");
 
-                if (href == "#finish")
+                if (href == "#finish" || href == "./")
                 {
                     wizard.finished();
                     return false;
@@ -37,15 +37,12 @@ export class Wizard{
                 let slide = this.closest(".slide");         
 
                 wizard.slide++;
-                slide.classList.add("hide");
 
                 let nextSlide = document.querySelector(`.slide-nr${wizard.slide}`);       
 
-                nextSlide.classList.remove("hide");
-
                 //wizard.vibrateAlert(0);
 
-                let action = nextSlide.getAttribute("data-action");
+                let action = slide.getAttribute("data-action");
 
                 switch (action) {
                     case "camera":
@@ -59,6 +56,9 @@ export class Wizard{
                     default:
                         break;
                 }
+
+                slide.classList.add("hide");
+                nextSlide.classList.remove("hide");
             });
         });
     }
@@ -90,5 +90,18 @@ export class Wizard{
         setTimeout(() => {
             this.vibrateAlert(count + 1);
         }, 600);
+    }
+
+    /**
+     * Hides all wizards
+     * @returns {undefined}
+     */
+    static hideAllWizards(){
+        const elements = document.querySelectorAll(".wizard");
+        elements.forEach(el => {
+            if (!el.classList.contains("hide")){
+                el.classList.add("hide");
+            }
+        });
     }
 }
