@@ -47,22 +47,24 @@ class Main {
 
         document.getElementById("open-settings").addEventListener("click", function (e) {
             this.classList.toggle("animate");
-            document.getElementById("navigation").classList.toggle("hide");
+            document.getElementById("settings").classList.toggle("hide");
+            document.querySelector("body").classList.add("hide-controls");
+            document.querySelector("#close-all").classList.remove("hide");
+        });
+
+        document.getElementById("open-map").addEventListener("click", function (e) {
+            this.classList.toggle("animate");
+            document.getElementById("place-select").classList.toggle("hide");
+            document.querySelector("body").classList.add("hide-controls");
+            document.querySelector("#close-all").classList.remove("hide");
+        });
+
+        document.getElementById("close-all").addEventListener("click", function (e) {
+            document.querySelector("body").classList.remove("hide-controls");
+            document.querySelector(".fs-modal:not(.hide)").classList.add("hide");
+            document.querySelector("#close-all").classList.add("hide");
         });
         
-        let elements = document.querySelectorAll(".nav-switch");
-        elements.forEach(element => {
-            element.addEventListener("click", function (e) {
-                e.preventDefault();
-                if (!document.querySelector("body").classList.contains("nav-switched")) {
-                    document.querySelector("body").classList.add("nav-switched");
-                }
-
-                let href = this.getAttribute("href");
-                document.querySelector(href).classList.remove("hide");
-            });
-        });
-
         /**
         * Click handler for the fullscreen button. Uses the JavaScript
         * FullScreen API. Basic support is present in most major browsers.

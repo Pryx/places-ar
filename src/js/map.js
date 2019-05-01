@@ -18,7 +18,8 @@ export class Map{
 
         this.map = new google.maps.Map(document.getElementById('map'), {
             zoom: 14,
-            center: origin
+            center: origin,
+            fullscreenControl: false
         });
         let temporary = new Location();
 
@@ -102,6 +103,7 @@ export class Map{
      * @returns {undefined}
      */
     setCenter(center){
+        console.log("Trying to set center", center);
         this.map.setCenter(center);
     }
 }

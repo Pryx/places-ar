@@ -56,7 +56,7 @@ define('PLACES_AR_VER', '0.9');
             </div>
         </div>
     </div>
-    <div id="close-all" class="hamburger animate">
+    <div id="close-all" class="hamburger animate hide">
       <div class="bar bar1"></div>
       <div class="bar bar2"></div>
       <div class="bar bar3"></div>
@@ -216,47 +216,32 @@ define('PLACES_AR_VER', '0.9');
       </div>
     </section>
     <section id="place-info">No place selected yet</section>
-    <section class="navigation hide" id="navigation">
-      <nav>
-        <h2>Navigation</h2>
-        <div class="vertically-center-abs">
-          <ul>
-            <li>
-              <a href="#place-select" class="nav-switch">Select a point of interest</a>
-            </li>
-            <li>
-              <a href="#settings" class="nav-switch">Settings</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    <section id="settings" class="hide fs-modal">
+      <section>
+        <h2>Settings</h2>
+        <h3>Video resolution</h3>
+        <select>
+          <option>1920x1080</option>
+          <option>1280x720</option>
+        </select>
+        <!-- Available resolution goes here... -->
+        <h3>Location update frequency</h3>
+        <!-- SLIDER GOES HERE... -->
+        <input type="range" name="location-freq">
+      </section>
+    </section>
+
+    <section id="place-select" class="hide fs-modal">
       <div id="infowindow-content">
         <img id="place-icon" src="" height="24" width="24">
         <span id="place-name" class="title"></span><br>
         <span id="place-address"></span>
         <div class="btn btn-success">OK</div>
       </div>
-      <section id="settings" class="nav-section hide">
-        <aside class="back">&lt;</aside>
-        <main>
-          <h2>Settings</h2>
-          <h3>Video resolution</h3>
-          <select>
-            <option>1920x1080</option>
-            <option>1280x720</option>
-          </select>
-          <!-- Available resolution goes here... -->
-          <h3>Location update frequency</h3>
-          <!-- SLIDER GOES HERE... -->
-          <input type="range" name="location-freq">
-        </main>
-      </section>
-      <section id="place-select" class="nav-section hide">
-        <aside class="back">&lt;</aside>
-        <main>
-          <h2>Select a point of interest</h2>
-          <section id="map"></section>
-        </main>
+      <section class="full-wrap">
+        <h2>Select a point of interest</h2>
+        <section id="map"></section>
+        <div id="recenter" class="noselect"><img src="img/crosshair.svg" alt="crosshair"> Recenter</div>
       </section>
     </section>
     <div class="video-container">

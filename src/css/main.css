@@ -214,7 +214,7 @@ body .hidden {
 .hamburger .bar {
   width: 35px;
   height: 5px;
-  background-color: #ECECEC;
+  background-color: #222;
   margin: 6px 0;
   transition: transform 0.4s ease-in-out;
 }
@@ -232,7 +232,9 @@ body .hidden {
 }
 
 .hamburger {
-  background: rgba(0,0,0,.8);
+  background: rgba(255,255,255, 0.95);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-radius: 0.4em;
   transition: transform 0.4s ease-in-out;
   transform: translate3d(0,0,0)
 }
@@ -287,26 +289,6 @@ body .navigation{
     transition: transform 0.4s ease-in-out
 }
 
-#navigation ul {
-    padding: 0;
-    text-align: center;
-    list-style: none;
-    margin: auto
-}
-
-#navigation ul a{
-    color: white;
-    font-weight: 700;
-    font-size: 1.8em;
-    line-height: 2.5em;
-    text-decoration: none;
-}
-
-#navigation .vertically-center-abs{
-    width: 100%
-}
-
-
 body .navigation.hide{
     transform: translate3d(-100%,0,0);
 }
@@ -350,17 +332,6 @@ html{
     color: white;
 }
 
-#navigation h2{
-    text-align: center;
-    font-size: 3em;
-    color: white;
-    margin: .4em;
-}
-
-#navigation #place-select h2{
-    font-size: 2em
-}
-
 #compass {
     position: fixed;
     left: 50%;
@@ -369,12 +340,31 @@ html{
     width: 70%;
     max-width: calc(100% - 110px - 6em);
     height: 40px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.95);
     padding: 5px 10px;
     display: block;
     margin: 0 auto;
     overflow: hidden;
     z-index: 99;
+    border-radius: 0.4em;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)
+}
+
+.fs-modal {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    position: fixed;
+    opacity:1;
+    z-index: 500;
+    display: block;
+    transition: all 250ms ease-in-out
+}
+
+.fs-modal.hide{
+    display: block;
+    z-index: 0;
+    opacity: 0;
 }
 
 #compass.isrelative{
@@ -404,7 +394,7 @@ html{
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    color: #fff;
+    color: #222;
     font-size: 32px;
     font-family: "Roboto Mono";
     font-weight: bold;
@@ -429,7 +419,9 @@ html{
     bottom: 1em;
     left: 1em;
     z-index: 999999;
-    background: rgba(0,0,0,.8);
+    background: rgba(255,255,255, 0.95);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    border-radius: 0.4em;
     width: 55px;
     height: 55px;
     transition: transform 0.4s ease-in-out;
@@ -439,7 +431,7 @@ html{
 .fullscreen .bar {
   width: 12px;
   height: 3px;
-  background-color: #ECECEC;
+  background-color: #222;
   margin: 6px 0;
   transition: transform 0.4s ease-in-out;
   position: absolute;
@@ -657,11 +649,12 @@ html{
     margin: 0 -2px;
 }
 #close-all.hide{
-    z-index: -5;
+    transform: translateX(-3em);
     opacity: 0;
 }
 #close-all{
-    opacity: 1;
+    transform: translateX(0);
+    opacity: 1!important;
     z-index: 999;
     translate: all 500ms ease-in-out
 }
@@ -718,7 +711,8 @@ html{
     right: 0;
 }
 
-.btn.btn-next:hover {
+.btn.btn-next:hover,
+.btn.btn-next:active {
     background: #1E88E5;
 }
 
@@ -752,14 +746,16 @@ html{
     height: 75px;
 }
 
-.btn.btn-next.finish:hover {
+.btn.btn-next.finish:hover,
+.btn.btn-next.finish:active {
     background: #43A047;
 }
 .btn.btn-next.finish {
     background: #4CAF50;
 }
 
-.btn.btn-next.error:hover {
+.btn.btn-next.error:hover,
+.btn.btn-next.error:active {
     background: #E53935;
 }
 .btn.btn-next.error {
@@ -800,4 +796,54 @@ html{
 .hide-controls .hamburger,
 .hide-controls #compass{
     opacity: 0!important;
+}
+
+.fs-modal h2 {
+    color: #fff;
+    text-align: center;
+    height: 2em;
+    line-height: 2em;
+}
+
+#recenter{
+    width: 200px;
+    height: 55px;
+    background: rgba(255,255,255,.95);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    color: #222;
+    text-align: center;
+    position: fixed;
+    bottom: 1em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2em;
+    border-radius: .4em;
+    line-height: 55px;
+    cursor: pointer;
+    transition: all 250ms ease-in-out
+}
+#recenter:hover,
+#recenter:active{
+    background: rgba(230,230,230,.95);
+}
+#recenter img {
+    height: 30px;
+    vertical-align: middle;
+    margin-top: -5px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+
+.full-wrap{
+    height: 100%;
+    width: 100%
 }

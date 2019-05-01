@@ -44,6 +44,11 @@ export class PositionService{
             }
         }
 
+
+        document.getElementById("recenter").addEventListener("click", (e) => {
+            console.log("Recenter triggered");
+            this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
+        });
         this.usefulLocationEventCount = 0;
         this.relativeAdjust = 0;
         this.waitForFix = true;
@@ -122,12 +127,12 @@ export class PositionService{
             }
 
             if (!document.querySelector("body").classList.contains("nav-switched")) {
-                this.map.setCenter({ lat: this.current.latitude, lng: this.current.longtitude });
+                this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
             }
         }
 
-        if (isNaN(this.selected.latitude) || isNaN(this.selected.longtitude) || 
-            isNaN(this.current.latitude) || isNaN(this.current.longtitude)) {
+        if (isNaN(this.selected.latitude) || isNaN(this.selected.longitude) || 
+            isNaN(this.current.latitude) || isNaN(this.current.longitude)) {
             return;
         }
 
@@ -173,15 +178,15 @@ export class PositionService{
         let R = 6371e3; // m
 
         let x1 = coords2.latitude - coords1.latitude;
-        let x2 = coords2.longtitude - coords1.longtitude;
+        let x2 = coords2.longitude - coords1.longitude;
 
-        let delta = { latitude: 0, longtitude: 0 };
+        let delta = { latitude: 0, longitude: 0 };
         delta.latitude = x1.toRad();
-        delta.longtitude = x2.toRad();
+        delta.longitude = x2.toRad();
 
         let a = Math.sin(delta.latitude / 2) * Math.sin(delta.latitude / 2) +
             Math.cos(coords1.latitude.toRad()) * Math.cos(coords2.latitude.toRad()) *
-            Math.sin(delta.longtitude / 2) * Math.sin(delta.longtitude / 2);
+            Math.sin(delta.longitude / 2) * Math.sin(delta.longitude / 2);
 
         let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -196,11 +201,11 @@ export class PositionService{
      * @returns {Number} Bearing
      */
     absBearing(coords1, coords2) {
-        let delta = { latitude: 0, longtitude: 0 };
-        delta.longtitude = (coords2.longtitude - coords1.longtitude);
-        let y = Math.sin(delta.longtitude) * Math.cos(coords2.latitude);
+        let delta = { latitude: 0, longitude: 0 };
+        delta.longitude = (coords2.longitude - coords1.longitude);
+        let y = Math.sin(delta.longitude) * Math.cos(coords2.latitude);
         let x = Math.cos(coords1.latitude) * Math.sin(coords2.latitude) - 
-            Math.sin(coords1.latitude) * Math.cos(coords2.latitude) * Math.cos(delta.longtitude);
+            Math.sin(coords1.latitude) * Math.cos(coords2.latitude) * Math.cos(delta.longitude);
         let bearing = Math.atan2(y, x).toDeg();
         return (bearing + 360) % 360;
     }

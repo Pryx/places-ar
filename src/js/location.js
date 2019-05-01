@@ -8,7 +8,7 @@ export class Location{
     constructor(){
         this.name = "";
         this.latitude = NaN;
-        this.longtitude = NaN;
+        this.longitude = NaN;
         this.elevation = 0;
         this.elevationAccuracy = Infinity;
         this.accuracy = Infinity;
