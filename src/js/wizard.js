@@ -3,7 +3,10 @@
  */
 export class Wizard{
     /**
-     * 
+     * Initializes the wizard, if run once is true, checks whether wizard already ran using WebStorage.
+     * @param {String} selector string selector
+     * @param {Boolean} runOnce whether to run wizard only once
+     * @param {Object} caller caller object
      */
     constructor(selector, runOnce, caller){
         this.selector = selector;
@@ -64,7 +67,8 @@ export class Wizard{
     }
 
     /**
-     * 
+     * Hides the wizard and if it should be run only once, writes true to WebStorage.
+     * @returns {undefined}
      */
     finished(){
         if (this.runOnce){
@@ -73,23 +77,6 @@ export class Wizard{
         
         document.querySelector("body").classList.remove("hide-controls");
         this.baseElement.classList.add("hide");
-    }
-
-    /**
-     * Vibrates phone to notify user of location fix
-     * @param {Number} count Couns how many vibrations took place
-     * @returns {undefined}
-     */
-    vibrateAlert(count){
-        if (count == 4){
-            return;
-        }
-
-        window.navigator.vibrate(400);
-
-        setTimeout(() => {
-            this.vibrateAlert(count + 1);
-        }, 600);
     }
 
     /**

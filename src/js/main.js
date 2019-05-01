@@ -15,14 +15,15 @@ class Main {
      */
     constructor(){
         this.positionService = new PositionService();
+        
         if (typeof (Storage) !== "undefined") {
-            this.settings = new Settings();
+            this.settings = new Settings(this);
         } else {
             this.settings = null;
-            // Old browser... Show warning and crash.
+            //TODO: Old browser... Show warning and crash.
         }
+
         this.runSetupWizard();
-        //this.initVideo();
     }
 
     /**
@@ -99,14 +100,17 @@ class Main {
      * @returns {undefined}
      */
     initVideo() {
-        //TODO: Screen aspect ratio
         //TODO: Save & load settings
         let video = document.getElementById('video');
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            let height = screen.height * window.devicePixelRatio;
-            let width = screen.width * window.devicePixelRatio;
-            console.log(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}`);
+            let height = screen.height * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
+            let width = screen.width * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
+
+            console.log(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}
+                Quality: ${window.localStorage.getItem("videoQuality")}`);
+            
+
             let settings = { video: { width: width, height: height, facingMode: "environment" } };
 
             navigator.mediaDevices.getUserMedia(settings)
@@ -120,13 +124,11 @@ class Main {
                     console.error("Couldn't gain access to camera!", e);
                     Wizard.hideAllWizards();
                     new Wizard("#permission_error");
-                    //TODO: Re-run wizard
                 });
         } else {
             console.warn("No media devices found!");
             Wizard.hideAllWizards();
             new Wizard("#no_media");
-            //TODO Shown error
         }
     }
     /**
@@ -141,6 +143,23 @@ class Main {
         } else {
             element.classList.remove("on");
         }
+    }
+
+    /**
+     * Vibrates phone to notify user of location fix
+     * @param {Number} count Couns how many vibrations took place
+     * @returns {undefined}
+     */
+    static vibrateAlert(count) {
+        if (count == 4) {
+            return;
+        }
+
+        window.navigator.vibrate(400);
+
+        setTimeout(() => {
+            this.vibrateAlert(count + 1);
+        }, 600);
     }
 }
 

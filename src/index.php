@@ -1,8 +1,10 @@
 <?php
+/*This constant is replaced by build system*/
+//TODO: Document the HTML
 define('PLACES_AR_VER', '0.9');
 ?>
 <!doctype html>
-<html class="no-js" lang="">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -12,7 +14,6 @@ define('PLACES_AR_VER', '0.9');
 
   <link rel="manifest" href="site.webmanifest">
   <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
 
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
@@ -37,7 +38,6 @@ define('PLACES_AR_VER', '0.9');
     </section>
   </noscript>
 
-  <!-- Add your site or application content here -->
   <main id="main">
     <div id="compass">
         <div class="compass-slider">
@@ -217,17 +217,30 @@ define('PLACES_AR_VER', '0.9');
     </section>
     <section id="place-info">No place selected yet</section>
     <section id="settings" class="hide fs-modal">
-      <section>
+      <section class="padded-wrap">
+        <div id="save" class="hamburger animate">
+          <img src="img/check.svg" alt="Save">
+        </div>
         <h2>Settings</h2>
-        <h3>Video resolution</h3>
-        <select>
-          <option>1920x1080</option>
-          <option>1280x720</option>
-        </select>
-        <!-- Available resolution goes here... -->
-        <h3>Location update frequency</h3>
-        <!-- SLIDER GOES HERE... -->
-        <input type="range" name="location-freq">
+        <div class="settings-wrap">
+          <h3>Video quality</h3>
+          <div class="slider">
+            (low) 0.1 <input type="range" name="videoQuality" step="0.1" max="1" min="0.1" value="1"> 1 (high)
+            <div class="visible-value">
+              <input type="number" name="videoQuality-nr" min="0.1" max="1" value="1" step="0.1">
+            </div>
+            <div class="warning">
+              You might be asked for camera permission again
+            </div>
+          </div>
+          <h3>Max location age</h3>
+          <div class="slider">
+            1s <input type="range" name="geoMaxAge" step="1" max="10" min="1" value="1"> 10s
+            <div class="visible-value">
+              <input type="number" name="geoMaxAge-nr" min="1" max="10" value="1" step="1">
+            </div>
+          </div>
+        </div>
       </section>
     </section>
 

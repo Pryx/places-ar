@@ -61,12 +61,33 @@ export class PositionService{
      * @returns {undefined}
      */
     initGeolocationWatcher(){
-        navigator.geolocation.watchPosition((e) => this.locationUpdate(e), this.locationUpdateFail, {
-            enableHighAccuracy: true, //We need high accuracy to be precise enough
-            maximumAge: window.localStorage.getItem("geoMaxAge"), //Get from settings
-            timeout: 60000 //1 minute
-        });
+        this.locationUpdateHandler = navigator.geolocation.watchPosition(
+            (e) => this.locationUpdate(e),
+            this.locationUpdateFail, 
+            {
+                enableHighAccuracy: true, //We need high accuracy to be precise enough
+                maximumAge: window.localStorage.getItem("geoMaxAge"), //Get from settings
+                timeout: 60000 //1 minute
+            }
+        );
         this.map = new Map((location) => this.confirmSelect(location));
+    }
+
+    /**
+     * @returns {undefined}
+     */
+    reinitGeolocationWatcher(){
+        navigator.geolocation.clearWatch(this.locationUpdateHandler);
+
+        this.locationUpdateHandler = navigator.geolocation.watchPosition(
+            (e) => this.locationUpdate(e),
+            this.locationUpdateFail,
+            {
+                enableHighAccuracy: true, //We need high accuracy to be precise enough
+                maximumAge: window.localStorage.getItem("geoMaxAge"), //Get from settings
+                timeout: 60000 //1 minute
+            }
+        );
     }
 
     /**
@@ -242,8 +263,6 @@ export class PositionService{
             adjust = -90;
         } else if (orientation === "landscape-secondary") {
             adjust = -90;
-        } else if (orientation === "portrait-secondary" || orientation === "portrait-primary") {
-            //TODO: Please rotate to landscape
         } else if (orientation === undefined) {
             console.warn("The orientation API isn't supported in this browser");
         }

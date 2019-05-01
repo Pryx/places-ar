@@ -87,7 +87,6 @@ export class Map{
         this.clickHandler = new ClickEventHandler(this.map, origin);
         this.geoMarker = new GeolocationMarker(this.map);
 
-        //TODO: This is going to have to change when the buttons split
         document.querySelector("#infowindow-content .btn").addEventListener("click", function () {
             document.querySelector("body").classList.remove("hide-controls");
             document.getElementById("close-all").classList.add("hide");

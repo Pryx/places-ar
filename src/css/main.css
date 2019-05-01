@@ -349,7 +349,7 @@ html{
     height: 100%;
     background: rgba(0,0,0,0.95);
     position: fixed;
-    opacity:1;
+    opacity: 1;
     z-index: 500;
     display: block;
     transition: all 250ms ease-in-out
@@ -642,13 +642,15 @@ html{
     height: 39px;
     margin: 0 -2px;
 }
+
 #close-all.hide{
     transform: translateX(-3em);
     opacity: 0;
 }
-#close-all{
+
+body main#main #close-all{
     transform: translateX(0);
-    opacity: 1!important;
+    opacity: 1;
     z-index: 999;
     translate: all 500ms ease-in-out
 }
@@ -681,6 +683,7 @@ html{
 .slide h2 {
     text-align: center;
 }
+
 .slide .padded-wrap {
     padding: 0 1.5em;
     display: inline-block;
@@ -688,7 +691,8 @@ html{
     box-sizing: border-box;
     height: calc(100% - 65px);
     margin-bottom: 65px;
-    overflow: auto;}
+    overflow: auto;
+}
 
 .btn.btn-next {
     background: #2196F3;
@@ -744,6 +748,7 @@ html{
 .btn.btn-next.finish:active {
     background: #43A047;
 }
+
 .btn.btn-next.finish {
     background: #4CAF50;
 }
@@ -752,6 +757,7 @@ html{
 .btn.btn-next.error:active {
     background: #E53935;
 }
+
 .btn.btn-next.error {
     background: #F44336;
 }
@@ -765,6 +771,7 @@ html{
   height: 100%; 
   overflow: hidden;
 }
+
 .video-container video {
   /* Make video to at least 100% wide and tall */
   min-width: 100%; 
@@ -781,15 +788,16 @@ html{
   transform: translate(-50%,-50%);
 }
 /*END*/
+
 .hamburger,
 #compass{
     opacity: 1;
     transition: opacity 250ms ease-in-out
 }
 
-.hide-controls .hamburger,
-.hide-controls #compass{
-    opacity: 0!important;
+body .hide-controls .hamburger,
+body .hide-controls #compass{
+    opacity: 0;
 }
 
 .fs-modal h2 {
@@ -816,10 +824,12 @@ html{
     cursor: pointer;
     transition: all 250ms ease-in-out
 }
+
 #recenter:hover,
 #recenter:active{
     background: rgba(230,230,230,.95);
 }
+
 #recenter img {
     height: 30px;
     vertical-align: middle;
@@ -835,7 +845,6 @@ html{
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
-
 
 .full-wrap{
     height: 100%;
@@ -888,4 +897,29 @@ html{
 
 #rotate_screen .rotate-wrapper img{
   width: 20%;
+}
+
+.settings-wrap{
+    text-align: center;
+    color: white;
+    background: rgba(255,255,255,.1);
+    height: calc(100vh - 88px);
+    padding-bottom: 1em;
+    overflow: auto;
+    display: block;
+    box-sizing: border-box;
+}
+
+.warning{
+    margin-top: 5px;
+    padding: .1em .4em;
+    background: #FF9800;
+    width: auto;
+    display: inline-block;
+    border-radius: .4em;
+}
+
+#save{
+    left: auto;
+    right: 1em;
 }
