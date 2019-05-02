@@ -158,11 +158,13 @@ export class PositionService{
             return;
         }
 
-        let distance = this.distanceFromCoords(this.current, this.selected);
-        let bearing = this.absBearing(this.selected, this.current);
+        let distance = PositionService.distanceFromCoords(this.current, this.selected);
+        let bearing = PositionService.absBearing(this.selected, this.current);
 
         document.getElementById("place-info").innerHTML = `<span id="location-name">${this.selected.name}</span><br>
-            <span id="place-distance">${this.formatDistance(distance)} (± ${this.formatDistance(this.current.accuracy)} )</span>`;
+            <span id="place-distance">
+                ${PositionService.formatDistance(distance)} (± ${PositionService.formatDistance(this.current.accuracy)})
+            </span>`;
 
         this.compass.setMarkerPosition(bearing);
     }
