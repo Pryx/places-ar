@@ -68,6 +68,9 @@ ci:
 doc:
 	@ echo "=== TODO === "
 
+test:
+	@ npm run test
+
 lint:
 	@ echo " -- Lint is starting. -- "
 	@ echo " == JS =="

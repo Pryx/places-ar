@@ -74,6 +74,7 @@ export class PositionService{
     }
 
     /**
+     * Reinitializes geolocation watcher
      * @returns {undefined}
      */
     reinitGeolocationWatcher(){
@@ -180,11 +181,11 @@ export class PositionService{
      * @param {Number} distance Distance in meters
      * @returns {String} formatted string
      */
-    formatDistance(distance) {
-        if (distance > 1000) {
-            return `${(distance / 1000).toFixed(2)} km`;
+    static formatDistance(distance) {
+        if (distance >= 1000) {
+            return `${parseFloat((distance / 1000).toFixed(2))} km`;
         } else {
-            return `${(distance).toFixed(2)} m`;
+            return `${parseFloat((distance).toFixed(2))} m`;
         }
     }
 
@@ -195,7 +196,7 @@ export class PositionService{
      * @see {Location}
      * @returns {Number} Distance in meters
      */
-    distanceFromCoords(coords1, coords2) {
+    static distanceFromCoords(coords1, coords2) {
         let R = 6371e3; // m
 
         let x1 = coords2.latitude - coords1.latitude;
@@ -216,17 +217,20 @@ export class PositionService{
 
     /**
      * Computes bearing between two locations
-     * @param {Location} coords1 First location
-     * @param {Location} coords2 Second location
+     * @param {Location} coords1 First location (from)
+     * @param {Location} coords2 Second location (where)
      * @see {Location}
-     * @returns {Number} Bearing
+     * @returns {Number} Bearing (counterclockwise from north)
      */
-    absBearing(coords1, coords2) {
+    static absBearing(coords1, coords2) {
         let delta = { latitude: 0, longitude: 0 };
+
         delta.longitude = (coords2.longitude - coords1.longitude);
-        let y = Math.sin(delta.longitude) * Math.cos(coords2.latitude);
-        let x = Math.cos(coords1.latitude) * Math.sin(coords2.latitude) - 
-            Math.sin(coords1.latitude) * Math.cos(coords2.latitude) * Math.cos(delta.longitude);
+
+        let y = Math.sin(delta.longitude.toRad()) * Math.cos(coords2.latitude.toRad());
+
+        let x = (Math.cos(coords1.latitude.toRad()) * Math.sin(coords2.latitude.toRad())) - 
+            (Math.sin(coords1.latitude.toRad()) * Math.cos(coords2.latitude.toRad()) * Math.cos(delta.longitude.toRad()));
         let bearing = Math.atan2(y, x).toDeg();
         return (bearing + 360) % 360;
     }

@@ -1,7 +1,5 @@
 import { Location } from './location';
-// Disabled because the package doesn't export GeolocationMarker, so can't use that
-// eslint-disable-next-line no-unused-vars
-import _ from 'geolocation-marker';
+
 
 /**
  * This class encapsulates Google Maps and everything related to it. 
@@ -85,6 +83,8 @@ export class Map{
         };
 
         this.clickHandler = new ClickEventHandler(this.map, origin);
+        // Disabled because the package doesn't export GeolocationMarker, so can't use that
+        require('geolocation-marker');
         this.geoMarker = new GeolocationMarker(this.map);
 
         document.querySelector("#infowindow-content .btn").addEventListener("click", function () {
