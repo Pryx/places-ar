@@ -2,7 +2,7 @@ import { PositionService } from './position-service';
 import { Settings } from './settings';
 import { Wizard } from './wizard';
 
-window.debug = false;
+window.debug = true;
 
 /**
  * Main class that handles all the basic functionality of

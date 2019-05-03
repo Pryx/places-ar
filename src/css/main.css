@@ -923,3 +923,7 @@ body .hide-controls #compass{
     left: auto;
     right: 1em;
 }
+
+.slider{
+    vertical-align: middle;
+}

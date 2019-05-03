@@ -40,7 +40,7 @@ export class PositionService{
             document.onmousemove = e => {
                 this.compass.setAngle(e.clientX / window.innerWidth * 360);
                 console.log(e.clientX / window.innerWidth * 360)
-                window.requestAnimationFrame(() => this.compass.render());
+                //window.requestAnimationFrame(() => this.compass.render());
             }
         }
 

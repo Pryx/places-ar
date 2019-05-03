@@ -1,3 +1,5 @@
+import { PID_Controller } from "./pid-controller"
+
 /**
  * The compass class encapsulates logic around rendering the actual Compass
  * based on device orientation data.
@@ -24,6 +26,13 @@ export class Compass {
         this.markerPos = 180;
 
         this.leftside = true;
+        this.pid = new PID_Controller(0.15, 0.04, 0.001);
+        this.pid.setOutputLimits(-45, 45);
+        window.pid = this.pid;
+        setInterval(() => {
+            this.deg += this.pid.compute(this.deg);
+            window.requestAnimationFrame(() => this.render());
+        }, 40);
     }
 
     /**
@@ -32,8 +41,9 @@ export class Compass {
      * @returns {undefined}
      */
     setAngle(angle) {
-        this.deg = angle;
-        this.render();
+        this.pid.setTarget(angle);
+        this.deg += this.pid.compute(this.deg);
+        window.requestAnimationFrame(() => this.render());
     }
 
     /**
