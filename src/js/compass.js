@@ -21,17 +21,35 @@ export class Compass {
         setSliderWidth();
         window.onresize = () => setSliderWidth();
 
-        this.deg = 0;
-        this.degLast = null;
+        this.angle = 0;
+        this.lastOffset = null;
         this.markerPos = 180;
+        this.lastAngle = 0;
 
         this.leftside = true;
         this.pid = new PID_Controller(0.15, 0.04, 0.001);
         this.pid.setOutputLimits(-45, 45);
         window.pid = this.pid;
         setInterval(() => {
-            this.deg += this.pid.compute(this.deg);
+            this.angle += this.pid.compute(this.angle);
+            console.log(`Angle: ${this.angle} Deg last: ${this.lastAngle}`);
+            if (this.lastAngle > 270 && this.pid.target < 90 ||
+				this.pid.target > 270 && this.lastAngle < 90)
+            {
+				console.log("Trying to skip the animation!");
+				this.slider.style.transition = `none`;
+				this.angle = this.pid.target;
+				window.requestAnimationFrame(() => {
+					this.render();
+					setTimeout(() => {
+						this.slider.style.transition = ``;
+					}, 40);
+				});	
+				this.lastAngle = this.pid.target;
+				return;
+			}
             window.requestAnimationFrame(() => this.render());
+            this.lastAngle = this.angle;
         }, 40);
     }
 
@@ -42,8 +60,6 @@ export class Compass {
      */
     setAngle(angle) {
         this.pid.setTarget(angle);
-        this.deg += this.pid.compute(this.deg);
-        window.requestAnimationFrame(() => this.render());
     }
 
     /**
@@ -82,9 +98,9 @@ export class Compass {
     renderMarker(angle, offset) {
         let precision = Math.pow(10, 3);
 
-        let degReal = angle % 360;
-        degReal += offset;
-        let pos = Math.floor((degReal / 90 * this.WIDTH) * precision) / precision;
+        let realAngle = angle % 360;
+        realAngle += offset;
+        let pos = Math.floor((realAngle / 90 * this.WIDTH) * precision) / precision;
 
         let marker = this.html.querySelector("#compass-icon");
         marker.style.left = pos + 'px';
@@ -98,29 +114,50 @@ export class Compass {
     render() {
         let precision = Math.pow(10, 3);
 
-        let degReal = this.deg % 360;
-        let offset = Math.floor((-1 * degReal / 90 * this.WIDTH) * precision) / precision;
+        let realAngle = this.angle % 360;
+        let offset = Math.floor((-1 * realAngle / 90 * this.WIDTH) * precision) / precision;
 
-        if (offset == this.degLast) {
+        if (offset == this.lastOffset) {
             return;
         }
 
         let inset = Math.floor((-4 * this.WIDTH) * precision) / precision;
         let center = 180;
 
-        if (degReal > center && this.leftside) {
+        document.getElementById("compass").classList.remove("right");
+        document.getElementById("compass").classList.remove("left");
+        //console.log(this.leftside, this.angle, this.markerPos, (this.markerPos + 180) % 360);
+        /*
+        if (this.leftside && Math.abs(this.markerPos - this.angle - 90) < 180 && Math.abs(this.markerPos - this.angle - 90) > 45)
+        {
+            document.getElementById("compass").classList.add("left");
+            console.log(`LEFT ${Math.abs(this.markerPos - this.angle - 45)}`);
+        } else if (Math.abs(this.markerPos - this.angle - 180) < 180 && Math.abs(this.markerPos - this.angle - 180) > 45) {
+            console.log(`RIGHT ${Math.abs(this.markerPos - this.angle - 270)}`);
+            document.getElementById("compass").classList.add("right");
+        }*/
+        if (realAngle > (360 + (360 - this.markerPos - 135) % 360)){
+            document.getElementById("compass").classList.add("left");
+        } else if (realAngle < (360 + (360 - this.markerPos - 225) % 360)){
+            document.getElementById("compass").classList.add("right");
+        }
+        if (realAngle > center && this.leftside) {
             if (this.markerPos < 90) {
+                console.log("this.markerPos < 90 leftside");
                 this.renderMarker(this.markerPos, 360);
             } else if (this.markerPos > 270) {
+                console.log("this.markerPos > 270 leftside");
                 this.renderMarker(this.markerPos, 0);
             }
             this.slider.firstElementChild.style.transform = `translateX(${-inset}px)`;
             this.slider.lastElementChild.style.transform = ``;
             this.leftside = false;
-        } else if (degReal < center && !this.leftside) {
+        } else if (realAngle < center && !this.leftside) {
             if (this.markerPos < 90) {
+                console.log("this.markerPos < 90 !leftside");
                 this.renderMarker(this.markerPos, 0);
             } else if (this.markerPos > 270) {
+                console.log("this.markerPos > 270 !leftside");
                 this.renderMarker(this.markerPos, -360);
             }
             this.slider.lastElementChild.style.transform = `translateX(${inset}px)`;
@@ -128,15 +165,8 @@ export class Compass {
             this.leftside = true;
         }
 
-        if (Math.abs(offset - this.degLast) > 2 * this.WIDTH) {
-            this.slider.style.transition = `none`;
-            setTimeout(() => {
-                this.slider.style.transition = ``;
-            }, 40);
-        }
-
         this.slider.style.transform = `translateX(${offset}px)`;
 
-        this.degLast = offset;
+        this.lastOffset = offset;
     }
 }

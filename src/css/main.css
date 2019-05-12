@@ -397,13 +397,13 @@ html{
 
 .compass-icon {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    background: #23ea0f;
+    background: #4CAF50;
     border-radius: 50%;
-    box-shadow: 0 0 2px 4px #23ea0f;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 #open-fullscreen{
@@ -926,4 +926,40 @@ body .hide-controls #compass{
 
 .slider{
     vertical-align: middle;
+}
+
+.compass-icon img {
+    height: 75%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+#compass.left::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 100%;
+    background: url("/img/chevron-left.svg"), linear-gradient(to right, rgb(76, 175, 80) 50%,rgba(255,255,255,0) 75%);
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#compass.right::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 100%;
+    background: url("/img/chevron-right.svg"), linear-gradient(to right, rgba(255,255,255,0) 25%, rgb(76, 175, 80) 50%);
+    top: 0;
+    right: 0;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }

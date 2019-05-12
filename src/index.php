@@ -1,7 +1,7 @@
 <?php
 /*This constant is replaced by build system*/
 //TODO: Document the HTML
-define('PLACES_AR_VER', '0.9');
+    define('PLACES_AR_VER', '1.0.0-16-20190505-12ede72');
 ?>
 <!doctype html>
 <html lang="en">
@@ -44,7 +44,9 @@ define('PLACES_AR_VER', '0.9');
             <div class="compass-segment">
                 <div class="compass-mark">N</div>
             </div>
-            <div id="compass-icon" class="compass-icon" style="left: 45%;display: none;"></div>
+            <div id="compass-icon" class="compass-icon" style="left: 45%;display: none;">
+               <img src="img/map-pin-white.svg" alt="Map">
+            </div>
             <div class="compass-segment">
                 <div class="compass-mark">E</div>
             </div>

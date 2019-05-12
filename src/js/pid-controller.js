@@ -62,9 +62,6 @@ export class PID_Controller {
             {
                 this.output = 0;
                 this.errorSum = 0;
-                if (window.debug){
-                    console.log(input, error, this.errorSum, this.output, this.lastInput);
-                }
                 return 0;
             }
 
@@ -72,10 +69,6 @@ export class PID_Controller {
             this.output = Math.max(this.min, Math.min(this.max, (this.p * error) + this.errorSum - (this.d * inputDiff)));
             this.lastInput = input;
             this.lastTime = now;
-
-            if (window.debug){
-                console.log(input, error, this.errorSum, this.output, this.lastInput);
-            }
         }
 
         return this.output;
