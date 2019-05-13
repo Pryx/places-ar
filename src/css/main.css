@@ -236,7 +236,10 @@ body .hidden {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   border-radius: 0.4em;
   transition: transform 0.4s ease-in-out;
-  transform: translate3d(0,0,0)
+  transform: translate3d(0,0,0);
+  max-height: 50px;
+  max-width: 50px;
+  box-sizing: border-box;
 }
 
 .hide{
@@ -416,14 +419,13 @@ html{
     background: rgba(255,255,255, 0.95);
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     border-radius: 0.4em;
-    width: 55px;
-    height: 55px;
-    transition: transform 0.4s ease-in-out;
-    transform: translate3d(0,0,0);
+    width: 50px;
+    height: 50px;
+    transition: transform 0.5s ease-in-out;
 }
 
 .fullscreen .bar {
-  width: 12px;
+  width: 11px;
   height: 3px;
   background-color: #222;
   margin: 6px 0;
@@ -433,48 +435,48 @@ html{
 
 .fullscreen .top-left-1{
     top: 5px;
-    left: 10px;
+    left: 9px;
     transform: translate3d(0,0,0);
 }
 
 .fullscreen .top-left-2{
-    top: 10px;
+    top: 9px;
     left: 5px;
     transform: rotate(90deg) translate3d(0,0,0)
 }
 
 .fullscreen .top-right-1{
     top: 5px;
-    right: 10px;
+    right: 9px;
     transform: translate3d(0,0,0);
 }
 
 .fullscreen .top-right-2{
-    top: 10px;
+    top: 9px;
     right: 5px;
     transform: rotate(90deg) translate3d(0,0,0)
 }
 
 .fullscreen .bottom-left-1{
     bottom: 5px;
-    left: 10px;
+    left: 9px;
     transform: translate3d(0,0,0);
 }
 
 .fullscreen .bottom-left-2{
-    bottom: 10px;
+    bottom: 9px;
     left: 5px;
     transform: rotate(90deg) translate3d(0,0,0)
 }
 
 .fullscreen .bottom-right-1{
     bottom: 5px;
-    right: 10px;
+    right: 9px;
     transform: translate3d(0,0,0);
 }
 
 .fullscreen .bottom-right-2{
-    bottom: 10px;
+    bottom: 9px;
     right: 5px;
     transform: rotate(90deg) translate3d(0,0,0)
 }
@@ -639,7 +641,7 @@ html{
 
 .hamburger img
 {
-    height: 39px;
+    height: 34px;
     margin: 0 -2px;
 }
 
@@ -652,7 +654,9 @@ body main#main #close-all{
     transform: translateX(0);
     opacity: 1;
     z-index: 999;
-    translate: all 500ms ease-in-out
+    translate: all 500ms ease-in-out;
+    left: .5rem;
+    top: .5rem
 }
 
 .wizard {
@@ -722,6 +726,7 @@ body main#main #close-all{
 
 #no_media .wizard-wrapper,
 #permission_error .wizard-wrapper,
+#needs_calibration .wizard-wrapper,
 #nojs .wizard-wrapper{
     height: 250px;
     max-height: 100%;
@@ -803,24 +808,24 @@ body .hide-controls #compass{
 .fs-modal h2 {
     color: #fff;
     text-align: center;
-    height: 2em;
+    height: 50px;
     line-height: 2em;
+    margin: .5rem 0;
 }
 
 #recenter{
-    width: 200px;
-    height: 55px;
+    width: 150px;
+    height: 50px;
     background: rgba(255,255,255,.95);
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     color: #222;
     text-align: center;
     position: fixed;
-    bottom: .5em;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2em;
+    top: .5rem;
+    right: .5rem;
+    font-size: 22px;
     border-radius: .4em;
-    line-height: 55px;
+    line-height: 50px;
     cursor: pointer;
     transition: all 250ms ease-in-out
 }
@@ -831,9 +836,9 @@ body .hide-controls #compass{
 }
 
 #recenter img {
-    height: 30px;
+    height: 20px;
     vertical-align: middle;
-    margin-top: -5px;
+    margin-top: -3px;
 }
 
 .noselect {
@@ -867,6 +872,7 @@ body .hide-controls #compass{
 #rotate_screen{
     display: none
 }
+
 
 @media screen and (orientation:portrait) {
     #rotate_screen{
@@ -962,4 +968,9 @@ body .hide-controls #compass{
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.hide-controls #open-fullscreen{
+    left: .5rem;
+    bottom: .5rem;
 }

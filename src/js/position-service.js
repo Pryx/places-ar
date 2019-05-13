@@ -1,6 +1,7 @@
 import { Compass } from './compass';
 import { Location } from './location';
 import { Map } from './map';
+import { Wizard } from './wizard';
 /**
  * This makes it possible to convert number from degrees to radians.
  * @returns {Number} Degrees converted to radians
@@ -33,6 +34,10 @@ export class PositionService{
         this.orientationHandler = (e) => this.deviceOrientationChange(e);
         window.addEventListener("deviceorientationabsolute", this.switchHandler);
         window.addEventListener("deviceorientation", this.orientationHandler);
+
+        window.addEventListener("compassneedscalibration", () => {
+            new Wizard("#needs_calibration", false, this);
+        }, true);
 
         this.compass = new Compass(document.getElementById("compass"));
         

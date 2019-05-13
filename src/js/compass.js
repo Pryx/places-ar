@@ -32,7 +32,7 @@ export class Compass {
         window.pid = this.pid;
         setInterval(() => {
             this.angle += this.pid.compute(this.angle);
-            console.log(`Angle: ${this.angle} Deg last: ${this.lastAngle}`);
+            //console.log(`Angle: ${this.angle} Deg last: ${this.lastAngle}`);
             if (this.lastAngle > 270 && this.pid.target < 90 ||
 				this.pid.target > 270 && this.lastAngle < 90)
             {
@@ -68,6 +68,7 @@ export class Compass {
      * @returns {undefined}
      */
     setMarkerPosition(angle) {
+        //Shift to correct position
         angle -= 135;
         if (angle < 0) {
             angle += 360;
@@ -126,21 +127,39 @@ export class Compass {
 
         document.getElementById("compass").classList.remove("right");
         document.getElementById("compass").classList.remove("left");
-        //console.log(this.leftside, this.angle, this.markerPos, (this.markerPos + 180) % 360);
-        /*
-        if (this.leftside && Math.abs(this.markerPos - this.angle - 90) < 180 && Math.abs(this.markerPos - this.angle - 90) > 45)
+        
+        let delta = this.angle - this.markerPos + 45;
+        console.log(`DELTA ${delta} ${this.markerPos}`);
+        if (Math.abs(delta) > 45)
         {
+            //if (this.markerPos <= 180){
+                console.log("closer to left");
+                if (delta > 180 || delta < 0) {
+                    document.getElementById("compass").classList.add("right");
+                } else {
+                    document.getElementById("compass").classList.add("left");
+                }
+            /*} else {
+                console.log("closer to right");
+                //console.log(this.angle, this.markerPos, delta, this.markerPos - 180, this.markerPos - 45);
+                if (delta > 180 || delta < 0) {
+                    document.getElementById("compass").classList.add("left");
+                } else {
+                    document.getElementById("compass").classList.add("right");
+                }
+            }*/
+        }
+
+        
+        
+
+        /*if (realAngle > (360 + (180 - this.markerPos - 45) % 360)){
             document.getElementById("compass").classList.add("left");
-            console.log(`LEFT ${Math.abs(this.markerPos - this.angle - 45)}`);
-        } else if (Math.abs(this.markerPos - this.angle - 180) < 180 && Math.abs(this.markerPos - this.angle - 180) > 45) {
-            console.log(`RIGHT ${Math.abs(this.markerPos - this.angle - 270)}`);
+        } else if (realAngle < (360 + (90 - this.markerPos - 45) % 360)){
             document.getElementById("compass").classList.add("right");
         }*/
-        if (realAngle > (360 + (360 - this.markerPos - 135) % 360)){
-            document.getElementById("compass").classList.add("left");
-        } else if (realAngle < (360 + (360 - this.markerPos - 225) % 360)){
-            document.getElementById("compass").classList.add("right");
-        }
+
+
         if (realAngle > center && this.leftside) {
             if (this.markerPos < 90) {
                 console.log("this.markerPos < 90 leftside");

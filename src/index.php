@@ -79,6 +79,17 @@
       <div class="bar bottom-right-1"></div>
       <div class="bar bottom-right-2"></div>
     </div>
+    <section id="needs_calibration" class="wizard hide">
+      <div class="wizard-wrapper">
+        <div class="slide slide-nr0">
+          <div class="padded-wrap">
+            <h2>Compass needs calibration!</h2>
+            Please recalibrate compass by moving your phone in figure 8 pattern 5 times and then press Done.
+          </div>
+          <a class="btn btn-next finish" href="#finish">Done</a>
+        </div>
+      </div>
+    </section>
     <section id="permission_error" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
