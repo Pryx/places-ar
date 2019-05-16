@@ -8,6 +8,10 @@ jobs:
 
     steps:
       - checkout
+
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}  
+           
       - run: 
           name: Install depedencies
           command: make setup
@@ -15,6 +19,11 @@ jobs:
       - run: 
           name: Lint
           command: make lint
+
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
 
 workflows:
   version: 2
