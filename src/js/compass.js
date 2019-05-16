@@ -31,10 +31,9 @@ export class Compass {
         this.pid.setOutputLimits(-45, 45);
         window.pid = this.pid;
         setInterval(() => {
-            //console.log(`Angle: ${this.angle} Deg last: ${this.lastAngle}`);
             if (this.lastAngle > 270 && this.pid.target < 90)
             {
-                console.log("Trying to skip the animation! 1");
+                console.log("Skip animation right");
                 this.slider.style.transition = `none`;
                 this.angle = 0;
                 window.requestAnimationFrame(() => {
@@ -51,7 +50,7 @@ export class Compass {
                 return;
             } else if (this.pid.target > 270 && this.lastAngle < 90)
             {
-				console.log("Trying to skip the animation! 2");
+				console.log("Skip animation left");
 				this.slider.style.transition = `none`;
                 this.angle = 359.99;
 				window.requestAnimationFrame(() => {
@@ -66,9 +65,9 @@ export class Compass {
 				});	
                 this.lastAngle = 359;
                 return;
-            }            
+            }        
+
             this.angle += this.pid.compute(this.angle);
-            //console.log(this.angle);
             window.requestAnimationFrame(() => this.render());
             this.lastAngle = this.angle;
         }, 40);

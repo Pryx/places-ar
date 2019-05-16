@@ -44,16 +44,13 @@ export class PositionService{
         if (window.debug) {
             document.onmousemove = e => {
                 this.compass.setAngle((e.clientX / window.innerWidth * 720) % 360);
-                //console.log((e.clientX / window.innerWidth * 720) % 360);
-                //window.requestAnimationFrame(() => this.compass.render());
             }
         }
 
-
         document.getElementById("recenter").addEventListener("click", (e) => {
-            console.log("Recenter triggered");
             this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
         });
+
         this.usefulLocationEventCount = 0;
         this.relativeAdjust = 0;
         this.waitForFix = true;
@@ -265,7 +262,7 @@ export class PositionService{
         if (orientation === "landscape-primary" || orientation === "landscape-secondary") {
             adjust = -90;
         } else if (orientation === undefined) {
-            console.warn("The orientation API isn't supported in this browser");
+            console.error("The orientation API isn't supported in this browser. Maybe too old?");
         }
 
         if (typeof alpha === "undefined" || alpha === null) {

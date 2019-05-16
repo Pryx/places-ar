@@ -111,8 +111,9 @@ class Main {
         let width = screen.width * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            console.log(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}
+            console.info(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}
                 Quality: ${window.localStorage.getItem("videoQuality")}`);
+
             let settings = { video: { width: width, height: height, facingMode: "environment" } };
             navigator.mediaDevices.getUserMedia(settings)
                 .then(stream => video.srcObject = stream)
@@ -127,7 +128,7 @@ class Main {
                     new Wizard("#permission_error");
                 });
         } else if (navigator.getUserMedia){
-            navigator.getUserMedia({video:true}, (stream) => {
+            navigator.getUserMedia({ video: { width: width, height: height}}, (stream) => {
                 video.src = stream;
                 video.style.display = 'block';
                 document.getElementById("insufficient-permissions").classList.add("hide");

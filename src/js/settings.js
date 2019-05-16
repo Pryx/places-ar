@@ -72,7 +72,7 @@ export class Settings {
                 return;
             }
 
-            console.log(`Updating ${el.name}`);
+            console.info(`Updating ${el.name} to ${el.value}`);
 
             switch (el.name) {
                 case "videoQuality":

@@ -103,7 +103,7 @@ export class Map{
         MapEventHandler.prototype.placesChanged = function () {
             let me = this;
             me.infowindow.close();
-            console.log(me.infoWindow);
+
             var places = this.autocomplete.getPlaces();
             places.forEach(function (place) {
                 if (!place.geometry) {
@@ -121,9 +121,6 @@ export class Map{
                 me.infowindowContent.children['place-icon'].src = place.icon;
                 me.infowindowContent.children['place-name'].textContent = place.name;
                 me.infowindowContent.children['place-address'].textContent = place.formatted_address;
-
-                console.log(me.infoWindow);
-                console.log(me.map);
 
                 me.infowindow.open(me.map);
             });
@@ -148,7 +145,7 @@ export class Map{
      * @returns {undefined}
      */
     setCenter(center){
-        console.log("Trying to set center", center);
+        console.info("Setting center", center);
         this.map.setCenter(center);
     }
 }
