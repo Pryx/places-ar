@@ -9,6 +9,10 @@ jobs:
     steps:
       - checkout
       - run: 
+          name: Install depedencies
+          command: make setup
+
+      - run: 
           name: Lint
           command: make lint
 
