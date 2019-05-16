@@ -23,7 +23,7 @@ export class Compass {
 
         this.angle = 0;
         this.lastOffset = null;
-        this.markerPos = 180;
+        this.markerPos = null;
         this.lastAngle = 0;
 
         this.leftside = true;
@@ -31,23 +31,44 @@ export class Compass {
         this.pid.setOutputLimits(-45, 45);
         window.pid = this.pid;
         setInterval(() => {
-            this.angle += this.pid.compute(this.angle);
             //console.log(`Angle: ${this.angle} Deg last: ${this.lastAngle}`);
-            if (this.lastAngle > 270 && this.pid.target < 90 ||
-				this.pid.target > 270 && this.lastAngle < 90)
+            if (this.lastAngle > 270 && this.pid.target < 90)
             {
-				console.log("Trying to skip the animation!");
+                console.log("Trying to skip the animation! 1");
+                this.slider.style.transition = `none`;
+                this.angle = 0;
+                window.requestAnimationFrame(() => {
+                    this.render();
+                    setTimeout(() => {
+                        this.slider.style.transition = ``;
+                        setTimeout(() => {
+                            this.angle += this.pid.compute(this.angle);
+                            window.requestAnimationFrame(() => this.render());
+                        }, 5);
+                    }, 1);
+                });
+                this.lastAngle = 0;
+                return;
+            } else if (this.pid.target > 270 && this.lastAngle < 90)
+            {
+				console.log("Trying to skip the animation! 2");
 				this.slider.style.transition = `none`;
-				this.angle = this.pid.target;
+                this.angle = 359.99;
 				window.requestAnimationFrame(() => {
-					this.render();
-					setTimeout(() => {
-						this.slider.style.transition = ``;
-					}, 40);
+                    this.render();
+                    setTimeout(() => {
+                        this.slider.style.transition = ``;
+                        setTimeout(() => {
+                            this.angle += this.pid.compute(this.angle);
+                            window.requestAnimationFrame(() => this.render());
+                        }, 5);
+                    }, 1);
 				});	
-				this.lastAngle = this.pid.target;
-				return;
-			}
+                this.lastAngle = 359;
+                return;
+            }            
+            this.angle += this.pid.compute(this.angle);
+            //console.log(this.angle);
             window.requestAnimationFrame(() => this.render());
             this.lastAngle = this.angle;
         }, 40);
@@ -81,7 +102,7 @@ export class Compass {
             } else {
                 this.renderMarker(this.markerPos, 0);
             }
-        } else if (!this.leftside) {
+        } else if (this.leftside) {
             if (this.markerPos > 270) {
                 this.renderMarker(this.markerPos, -360);
             } else {
@@ -129,55 +150,36 @@ export class Compass {
         document.getElementById("compass").classList.remove("left");
         
         let delta = this.angle - this.markerPos + 45;
-        console.log(`DELTA ${delta} ${this.markerPos}`);
-        if (Math.abs(delta) > 45)
-        {
-            //if (this.markerPos <= 180){
-                console.log("closer to left");
+
+        if (this.markerPos != null){
+            if (Math.abs(Math.min(delta, 360 - delta)) > 45)
+            {
                 if (delta > 180 || delta < 0) {
                     document.getElementById("compass").classList.add("right");
                 } else {
                     document.getElementById("compass").classList.add("left");
                 }
-            /*} else {
-                console.log("closer to right");
-                //console.log(this.angle, this.markerPos, delta, this.markerPos - 180, this.markerPos - 45);
-                if (delta > 180 || delta < 0) {
-                    document.getElementById("compass").classList.add("left");
-                } else {
-                    document.getElementById("compass").classList.add("right");
-                }
-            }*/
+            }
         }
 
-        
-        
-
-        /*if (realAngle > (360 + (180 - this.markerPos - 45) % 360)){
-            document.getElementById("compass").classList.add("left");
-        } else if (realAngle < (360 + (90 - this.markerPos - 45) % 360)){
-            document.getElementById("compass").classList.add("right");
-        }*/
-
-
         if (realAngle > center && this.leftside) {
-            if (this.markerPos < 90) {
-                console.log("this.markerPos < 90 leftside");
-                this.renderMarker(this.markerPos, 360);
-            } else if (this.markerPos > 270) {
-                console.log("this.markerPos > 270 leftside");
-                this.renderMarker(this.markerPos, 0);
+            if (this.markerPos != null){
+                if (this.markerPos < 90) {
+                    this.renderMarker(this.markerPos, 360);
+                } else if (this.markerPos > 270) {
+                    this.renderMarker(this.markerPos, 0);
+                }
             }
             this.slider.firstElementChild.style.transform = `translateX(${-inset}px)`;
             this.slider.lastElementChild.style.transform = ``;
             this.leftside = false;
         } else if (realAngle < center && !this.leftside) {
-            if (this.markerPos < 90) {
-                console.log("this.markerPos < 90 !leftside");
-                this.renderMarker(this.markerPos, 0);
-            } else if (this.markerPos > 270) {
-                console.log("this.markerPos > 270 !leftside");
-                this.renderMarker(this.markerPos, -360);
+            if (this.markerPos != null){
+                if (this.markerPos < 90) {
+                    this.renderMarker(this.markerPos, 0);
+                } else if (this.markerPos > 270) {
+                    this.renderMarker(this.markerPos, -360);
+                }
             }
             this.slider.lastElementChild.style.transform = `translateX(${inset}px)`;
             this.slider.firstElementChild.style.transform = ``;

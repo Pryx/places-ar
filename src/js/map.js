@@ -14,22 +14,24 @@ export class Map{
         let origin = {
             lat: 50.0755381, lng: 14.4378005 };
 
-        this.map = new google.maps.Map(document.getElementById('map'), {
+        let map = new google.maps.Map(document.getElementById('map'), {
             zoom: 14,
             center: origin,
             fullscreenControl: false,
             mapTypeControl: false,
             streetViewControl: false
         });
+
+        this.map = map;
         let temporary = new Location();
 
         /**
-         * Creates new ClickEventHandler for Google Maps
+         * Creates new MapEventHandler for Google Maps
          * @param {google.maps.Map} map Google Map instance
          * @param {Object} origin Location
          * @returns {undefined}
          */
-        let ClickEventHandler = function (map, origin) {
+        let MapEventHandler = function (map, origin) {
             this.origin = origin;
             this.map = map;
             this.placesService = new google.maps.places.PlacesService(map);
@@ -38,19 +40,33 @@ export class Map{
             this.infowindow = new google.maps.InfoWindow;
             this.infowindowContent = document.getElementById('infowindow-content');
             this.infowindow.setContent(this.infowindowContent);
+            
+            var card = document.getElementById('pac-card');
+            var input = document.getElementById('pac-input');
+
+            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+            this.autocomplete = new google.maps.places.SearchBox(input);
+            
+            // Bind the map's bounds (viewport) property to the autocomplete object,
+            // so that the autocomplete requests use the current map bounds for the
+            // bounds option in the request.
+            this.autocomplete.bindTo('bounds', map);
+
+            this.autocomplete.addListener('places_changed', () => this.placesChanged());
 
             // Listen for clicks on the map.
             this.map.addListener('click', this.handleClick.bind(this));
         };
 
-        ClickEventHandler.prototype.handleClick = function (event) {
+        MapEventHandler.prototype.handleClick = function (event) {
             if (event.placeId) {
                 event.stop();
                 this.getPlaceInformation(event.placeId);
             }
         };
 
-        ClickEventHandler.prototype.getPlaceInformation = function (placeId) {
+        MapEventHandler.prototype.getPlaceInformation = function (placeId) {
             let me = this;
             this.placesService.getDetails({ placeId: placeId }, function (place, status) {
                 if (status === 'OK') {
@@ -84,7 +100,36 @@ export class Map{
             });
         };
 
-        this.clickHandler = new ClickEventHandler(this.map, origin);
+        MapEventHandler.prototype.placesChanged = function () {
+            let me = this;
+            me.infowindow.close();
+            console.log(me.infoWindow);
+            var places = this.autocomplete.getPlaces();
+            places.forEach(function (place) {
+                if (!place.geometry) {
+                    console.warn(`No geometry for ${place.name}`);
+                    return;
+                }
+
+                if (place.geometry.viewport) {
+                    me.map.fitBounds(place.geometry.viewport);
+                } else {
+                    me.map.setCenter(place.geometry.location);
+                    me.map.setZoom(17);  // Why 17? Because it looks good.
+                }
+
+                me.infowindowContent.children['place-icon'].src = place.icon;
+                me.infowindowContent.children['place-name'].textContent = place.name;
+                me.infowindowContent.children['place-address'].textContent = place.formatted_address;
+
+                console.log(me.infoWindow);
+                console.log(me.map);
+
+                me.infowindow.open(me.map);
+            });
+        };
+
+        this.mapEventHandler = new MapEventHandler(this.map, origin);
         // Disabled because the package doesn't export GeolocationMarker, so can't use that
         require('geolocation-marker');
         this.geoMarker = new GeolocationMarker(this.map);

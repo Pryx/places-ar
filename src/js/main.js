@@ -102,17 +102,18 @@ class Main {
     initVideo() {
         //TODO: Save & load settings
         let video = document.getElementById('video');
+        navigator.getUserMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia);
+        
+        let height = screen.height * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
+        let width = screen.width * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            let height = screen.height * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
-            let width = screen.width * window.devicePixelRatio * window.localStorage.getItem("videoQuality");
-
             console.log(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}
                 Quality: ${window.localStorage.getItem("videoQuality")}`);
-            
-
             let settings = { video: { width: width, height: height, facingMode: "environment" } };
-
             navigator.mediaDevices.getUserMedia(settings)
                 .then(stream => video.srcObject = stream)
                 .then(() => new Promise(resolve => video.onloadedmetadata = resolve))
@@ -125,6 +126,16 @@ class Main {
                     Wizard.hideAllWizards();
                     new Wizard("#permission_error");
                 });
+        } else if (navigator.getUserMedia){
+            navigator.getUserMedia({video:true}, (stream) => {
+                video.src = stream;
+                video.style.display = 'block';
+                document.getElementById("insufficient-permissions").classList.add("hide");
+            }, (e) => {
+                console.error("Couldn't gain access to camera!", e);
+                Wizard.hideAllWizards();
+                new Wizard("#permission_error");
+            });
         } else {
             console.warn("No media devices found!");
             Wizard.hideAllWizards();

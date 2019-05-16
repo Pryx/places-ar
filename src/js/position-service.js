@@ -44,7 +44,7 @@ export class PositionService{
         if (window.debug) {
             document.onmousemove = e => {
                 this.compass.setAngle((e.clientX / window.innerWidth * 720) % 360);
-                console.log((e.clientX / window.innerWidth * 720) % 360);
+                //console.log((e.clientX / window.innerWidth * 720) % 360);
                 //window.requestAnimationFrame(() => this.compass.render());
             }
         }
@@ -105,7 +105,7 @@ export class PositionService{
         document.getElementById("compass").classList.add("isAbsoluteEvent");
         window.removeEventListener("deviceorientationabsolute", this.switchHandler);
         window.removeEventListener("deviceorientation", this.orientationHandler);
-        this.waitForFix = false;
+        clearTimeout(this.relativeTimeout);
         this.relativeAdjust = 0;
         window.addEventListener("deviceorientationabsolute", this.orientationHandler);
     }
@@ -148,7 +148,7 @@ export class PositionService{
                 this.relativeAdjust = position.coords.heading;
 
                 if (this.usefulLocationEventCount > 3) {
-                    this.relativeAdjust = this.relativeAdjust - this.current.bearing - 90; //+90 because of landscape adjust :)
+                    this.relativeAdjust = this.relativeAdjust - this.current.bearing - 90; //90 because of landscape adjust :)
                     this.waitForFix = false;
                 }
             }
@@ -256,23 +256,13 @@ export class PositionService{
         let gamma = e.gamma;
 
         let orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
-
-        let landscape = screen.width > screen.height;
-
         
-
-        if (this.waitForFix && !e.absolute && !document.getElementById("compass").classList.contains("isrelative")) {
-            document.getElementById("compass").classList.add("isrelative");
-        } else if (document.getElementById("compass").classList.contains("isrelative") && !this.waitForFix) {
-            document.getElementById("compass").classList.remove("isrelative");
-            if (!e.absolute) {
-                document.getElementById("compass").classList.add("hasfix");
-            }
+        if (!e.absolute && e.webkitCompassHeading){
+            document.querySelector("body").classList.remove("relative");
+            alpha = e.webkitCompassHeading;
         }
 
-        if (orientation === "landscape-primary") {
-            adjust = -90;
-        } else if (orientation === "landscape-secondary") {
+        if (orientation === "landscape-primary" || orientation === "landscape-secondary") {
             adjust = -90;
         } else if (orientation === undefined) {
             console.warn("The orientation API isn't supported in this browser");

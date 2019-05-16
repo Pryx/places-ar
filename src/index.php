@@ -40,28 +40,26 @@
 
   <main id="main">
     <div id="compass">
-        <div class="compass-slider">
-            <div class="compass-segment">
-                <div class="compass-mark">N</div>
-            </div>
-            <div id="compass-icon" class="compass-icon" style="left: 45%;display: none;">
-               <img src="img/map-pin-white.svg" alt="Map">
-            </div>
-            <div class="compass-segment">
-                <div class="compass-mark">E</div>
-            </div>
-            <div class="compass-segment">
-                <div class="compass-mark">S</div>
-            </div>
-            <div class="compass-segment">
-                <div class="compass-mark">W</div>
-            </div>
+      <div class="compass-slider">
+        <div class="compass-segment">
+          <div class="compass-mark">N</div>
         </div>
+        <div id="compass-icon" class="compass-icon" style="left: 45%;display: none;">
+          <img src="img/map-pin-white.svg" alt="Map">
+        </div>
+        <div class="compass-segment">
+          <div class="compass-mark">E</div>
+        </div>
+        <div class="compass-segment">
+          <div class="compass-mark">S</div>
+        </div>
+        <div class="compass-segment">
+          <div class="compass-mark">W</div>
+        </div>
+      </div>
     </div>
     <div id="close-all" class="hamburger animate hide">
-      <div class="bar bar1"></div>
-      <div class="bar bar2"></div>
-      <div class="bar bar3"></div>
+      <img src="img/x.svg" alt="Close">
     </div>
     <div id="open-settings" class="hamburger">
       <img src="img/settings.svg" alt="Settings">
@@ -174,11 +172,11 @@
           </div>
           <a class="btn btn-next" href="#next">Let's get started!</a>
         </div>
-        <div class="slide slide-nr1 hide">
+        <div class="slide slide-nr1 hide" data-action="calibration">
           <div class="padded-wrap">
-            <h2>Preparation</h2>
+            <h2>Calibration</h2>
             <p>
-              Please find a place where you can walk about 100 meters straight. Once you are ready, hold the phone directly in front of you.
+              Please walk with your phone directly in front of you. The direction of your walk shouldn't be important.
             </p>
             <p>
               Then click on the "Start calibration" button.
@@ -186,39 +184,13 @@
           </div>
           <a class="btn btn-next" href="#next">Start calibration</a>
         </div>
-        <div class="slide slide-nr2 hide" data-action="calibration1">
+        <div class="slide slide-nr2 hide">
           <div class="padded-wrap">
-            <h2>Calibration part 1</h2>
+            <h2>Calibration progress</h2>
             <p>
-              Please walk forward now. Once we have a fix, you will be notified.
-            </p>
-          </div>
-        </div>
-        <div class="slide slide-nr3 hide">
-          <div class="padded-wrap">
-            <h2>Calibration step 1 done</h2>
-            <p>
-              First step of the calibration is complete. Now please turn back.
-            </p>
-            <p>
-              Then click on the "Continue calibration" button.
-            </p>
-          </div>
-          <a class="btn btn-next" href="#next">Continue calibration</a>
-        </div>
-        <div class="slide slide-nr4 hide" data-action="calibration2">
-          <div class="padded-wrap">
-            <h2>Calibration step 2</h2>
-            <p>
-              Now please walk back to where you started.
-            </p>
-          </div>
-        </div>
-        <div class="slide slide-nr5 hide">
-          <div class="padded-wrap">
-            <h2>Calibration complete</h2>
-            <p>
-              Calibration is now complete and we should have a pretty good approximation of the North. 
+              Keep walking until you are satisfied with the error margin. 
+              Current error margin is <strong id="error_margin">999</strong>
+              Based on <strong id="event_count">999</strong> location updates
             </p>
             <p>
               Click finish to proceed to the app.
@@ -259,6 +231,12 @@
 
     <section id="place-select" class="hide fs-modal">
       <div id="infowindow-content">
+        <div class="pac-card" id="pac-card">
+          <div id="pac-container">
+            <input id="pac-input" type="text"
+                placeholder="Enter a location">
+          </div>
+        </div>
         <img id="place-icon" src="" height="24" width="24">
         <span id="place-name" class="title"></span><br>
         <span id="place-address"></span>
