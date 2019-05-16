@@ -66,7 +66,8 @@ ci:
 	@ echo " -- Build is complete. -- "
 
 doc:
-	@ echo "=== TODO === "
+	@ echo "=== Generating documentation === "
+	@ ./node_modules/.bin/esdoc
 
 test:
 	@ npm run test
