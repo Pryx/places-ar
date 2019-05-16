@@ -1,0 +1,1001 @@
+/*! HTML5 Boilerplate v6.1.0 | MIT License | https://html5boilerplate.com/ */
+
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+    color: #222;
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * Vendor-prefixed and regular ::selection selectors cannot be combined:
+ * https://stackoverflow.com/a/16982510/7133471
+ *
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/*
+ * Remove the gap between audio, canvas, iframes,
+ * images, videos and the bottom of their containers:
+ * https://github.com/h5bp/html5-boilerplate/issues/440
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Browser Upgrade Prompt
+   ========================================================================== */
+
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Hide visually and from screen readers
+ */
+/* stylelint-disable */
+body .hidden {
+    display: none !important;
+}
+/* stylelint-enable */
+/*compass
+ * Hide only visually, but have it available for screen readers:
+ * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ *
+ * 1. For long content, line feeds are not interpreted as spaces and small width
+ *    causes content to wrap 1 word per line:
+ *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+ */
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap; /* 1 */
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+    white-space: inherit;
+}
+
+/*
+ * Hide visually and from screen readers, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 1.25dppx),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+.hamburger {
+  display: inline-block;
+  cursor: pointer;
+  padding: 8px 10px;
+  position: fixed;
+  top: 1em;
+  left: 1em;
+  z-index: 50
+}
+
+#open-map{
+  top: 1em;
+  right: 1em;
+  left: auto;
+}
+
+.hamburger .bar {
+  width: 35px;
+  height: 5px;
+  background-color: #222;
+  margin: 6px 0;
+  transition: transform 0.4s ease-in-out;
+}
+
+.animate .bar1 {
+  -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+  transform: rotate(-45deg) translate(-9px, 6px);
+}
+
+.animate .bar2 {opacity: 0;}
+
+.animate .bar3 {
+  -webkit-transform: rotate(45deg) translate(-8px, -8px);
+  transform: rotate(45deg) translate(-8px, -8px);
+}
+
+.hamburger {
+  background: rgba(255,255,255, 0.95);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-radius: 0.4em;
+  transition: transform 0.4s ease-in-out;
+  transform: translate3d(0,0,0);
+  max-height: 50px;
+  max-width: 50px;
+  box-sizing: border-box;
+}
+
+.hide{
+    display: none;
+}
+
+.wizard.hide{
+    visibility: hidden;
+    opacity: 0;
+    display: block;
+}
+
+.wizard{
+    opacity: 1;
+    visibility: visible;
+    transition: all 250ms ease-in-out;
+}
+
+.slide.hide{
+    display: block;
+    transform: translateX(-100%);
+}
+
+.wizard .slide:not(.hide) ~ .slide{
+    transform: translateX(100%);
+}
+/*
+body .wizard .slide.hide.slideleft{
+    transform: translateX(100%);
+
+}*/
+
+.slide{
+    transform: translateX(0);
+    transition: transform 250ms cubic-bezier(0.25, 0.8, 0.25, 1)
+}
+
+body .navigation{
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background: rgba(0, 0, 0, .9);
+    transform: translate3d(0,0,0);
+    transition: transform 0.4s ease-in-out
+}
+
+body .navigation.hide{
+    transform: translate3d(-100%,0,0);
+}
+
+html{
+    font-family: 'Roboto', sans-serif;
+}
+
+#insufficient-permissions {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background: #ffa726;
+}
+
+.vertically-center{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.vertically-center-abs{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn{
+    display: block;
+    padding: .2em .4em;
+    border-radius: .2em;
+    font-size: 1.2em
+}
+
+#compass {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 1em;
+    width: 70%;
+    max-width: calc(100% - 110px - 6em);
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 5px 10px;
+    display: block;
+    margin: 0 auto;
+    overflow: hidden;
+    z-index: 60;
+    border-radius: 0.4em;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)
+}
+
+.fs-modal {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    position: fixed;
+    opacity: 1;
+    z-index: 95;
+    display: block;
+    transition: all 250ms ease-in-out
+}
+
+.fs-modal.hide{
+    display: block;
+    z-index: 0;
+    opacity: 0;
+}
+
+#compass.isrelative{
+    background: rgba(255, 0, 0, 0.6);
+}
+
+#compass.hasfix{
+    background: rgba(0, 255, 0, 0.6);
+}
+
+.compass-slider {
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    transition: transform 60ms linear
+}
+
+.compass-segment {
+    width: 100%;
+    display: inline-block;
+    height: 100%;
+    position: relative;
+}
+
+.compass-mark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: #222;
+    font-size: 32px;
+    font-family: "Roboto Mono";
+    font-weight: bold;
+    line-height: 40px;
+}
+
+.compass-icon {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: #4CAF50;
+    border-radius: 50%;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+#open-fullscreen{
+    display: inline-block;
+    cursor: pointer;
+    position: fixed;
+    bottom: 1em;
+    left: 1em;
+    z-index: 100;
+    background: rgba(255,255,255, 0.95);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    border-radius: 0.4em;
+    width: 50px;
+    height: 50px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.fullscreen .bar {
+  width: 11px;
+  height: 3px;
+  background-color: #222;
+  margin: 6px 0;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: absolute;
+}
+
+.fullscreen .top-left-1{
+    top: 5px;
+    left: 9px;
+    transform: translate3d(0,0,0);
+}
+
+.fullscreen .top-left-2{
+    top: 9px;
+    left: 5px;
+    transform: rotate(90deg) translate3d(0,0,0)
+}
+
+.fullscreen .top-right-1{
+    top: 5px;
+    right: 9px;
+    transform: translate3d(0,0,0);
+}
+
+.fullscreen .top-right-2{
+    top: 9px;
+    right: 5px;
+    transform: rotate(90deg) translate3d(0,0,0)
+}
+
+.fullscreen .bottom-left-1{
+    bottom: 5px;
+    left: 9px;
+    transform: translate3d(0,0,0);
+}
+
+.fullscreen .bottom-left-2{
+    bottom: 9px;
+    left: 5px;
+    transform: rotate(90deg) translate3d(0,0,0)
+}
+
+.fullscreen .bottom-right-1{
+    bottom: 5px;
+    right: 9px;
+    transform: translate3d(0,0,0);
+}
+
+.fullscreen .bottom-right-2{
+    bottom: 9px;
+    right: 5px;
+    transform: rotate(90deg) translate3d(0,0,0)
+}
+
+
+.fullscreen.on .top-left-1{
+    top: 5px;
+    left: 10px;
+    transform: translate3d(0,10px,0);
+}
+
+.fullscreen.on .top-left-2{
+    top: 10px;
+    left: 5px;
+    transform: rotate(90deg) translate3d(0,-10px,0)
+}
+
+.fullscreen.on .top-right-1{
+    top: 5px;
+    right: 10px;
+    transform: translate3d(0,10px,0);
+}
+
+.fullscreen.on .top-right-2{
+    top: 10px;
+    right: 5px;
+    transform: rotate(90deg) translate3d(0,10px,0);
+}
+
+.fullscreen.on .bottom-left-1{
+    bottom: 5px;
+    left: 10px;
+    transform: translate3d(0,-10px,0);
+}
+
+.fullscreen.on .bottom-left-2{
+    bottom: 10px;
+    left: 5px;
+    transform: rotate(90deg) translate3d(0,-10px,0)
+}
+
+.fullscreen.on .bottom-right-1{
+    bottom: 5px;
+    right: 10px;
+    transform: translate3d(0,-10px,0);
+}
+
+.fullscreen.on .bottom-right-2{
+    bottom: 10px;
+    right: 5px;
+    transform: rotate(90deg) translate3d(0,10px,0);
+}
+
+#place-info{
+    color: white;
+    text-shadow: 0px 0px 2px #000000, 0px 0px 2px #000000, 0px 0px 2px #000000;
+    position: fixed;
+    bottom: 1em;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-size: 1.4em;
+    text-align: center
+}
+
+.nav-section{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
+    color: white;
+    text-align: center
+}
+
+.nav-section aside{
+    position: relative;
+    left: 0;
+    height: 100%;
+    width: 90px;
+    min-width: 30px;
+    font-size: 30px;
+    float: left;
+    overflow: hidden;
+    background: rgb(255, 255, 255, .25);
+    color: white;
+    line-height: 100vh;
+}
+
+.nav-section main{
+    overflow: hidden;
+    width: auto;
+    height: 100%;
+}
+
+.nav-section{
+    transform: translate3d(0,0,0);
+    transition: transform .4s ease-in-out
+}
+
+.nav-section.hide{
+    display: block;
+    transition: transform .4s ease-in-out;
+    transform: translate3d(-110vw, 0, 0)
+}
+
+#map {
+    height: calc(100% - 4.3em);
+    width: 100%;
+}
+
+.title {
+    font-weight: bold;
+}
+
+#infowindow-content {
+    display: none;
+}
+
+#map #infowindow-content {
+    display: inline;
+}
+
+#infowindow-content {
+    color: #222;
+    text-align: left;
+    float: left;
+}
+
+#place-name {
+    font-size: 1.4em;
+    display: inline-block;
+    line-height: 30px;
+}
+
+#place-icon, #place-address{
+    display: inline-block;
+}
+
+#place-icon{
+    float: left;
+    margin-right: 5px
+}
+
+#place-address{
+    margin: 5px 0;
+    font-size: 1.1em
+}
+
+#infowindow-content .btn.btn-success{
+    text-align: center;
+    font-weight: 700;
+    padding: .6em .4em
+}
+
+.btn, .back{
+    cursor: pointer
+}
+
+.hamburger img
+{
+    height: 34px;
+    margin: 0 -2px;
+}
+
+#close-all.hide{
+    transform: translateX(-3em);
+    opacity: 0;
+}
+
+body main#main #close-all{
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 100;
+    translate: all 500ms ease-in-out;
+    left: .5rem;
+    top: .5rem
+}
+
+.wizard {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    background: rgba(0,0,0,0.85);
+}
+
+.wizard-wrapper .slide{
+    color: #222
+}
+
+.wizard-wrapper {
+    width: 450px;
+    margin: auto;
+    top: 50%;
+    position: relative;
+    transform: translateY(-50%);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.slide h2 {
+    text-align: center;
+}
+
+.slide .padded-wrap {
+    padding: 0 1.5em;
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    height: calc(100% - 65px);
+    margin-bottom: 65px;
+    overflow: auto;
+}
+
+.btn.btn-next {
+    background: #2196F3;
+    padding: 1em;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 0;
+    transition: all 250ms ease-in-out;
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.btn.btn-next:hover,
+.btn.btn-next:active {
+    background: #1E88E5;
+}
+
+#wizard .wizard-wrapper{
+    height: 300px;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+#no_media .wizard-wrapper,
+#permission_error .wizard-wrapper,
+#needs_calibration .wizard-wrapper,
+#nojs .wizard-wrapper{
+    height: 250px;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.slide {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgb(255,255,255);
+    background: linear-gradient(315deg, rgba(255,255,255,1) 0%, rgba(244,244,244,1) 50%, rgba(240,240,240,1) 100%); 
+}
+
+.wizard-icon-big {
+    display: block;
+    margin: auto;
+    height: 75px;
+}
+
+.btn.btn-next.finish:hover,
+.btn.btn-next.finish:active {
+    background: #43A047;
+}
+
+.btn.btn-next.finish {
+    background: #4CAF50;
+}
+
+.btn.btn-next.error:hover,
+.btn.btn-next.error:active {
+    background: #E53935;
+}
+
+.btn.btn-next.error {
+    background: #F44336;
+}
+
+/* CREDIT START: https://stackoverflow.com/questions/36949747/make-video-fit-100-with-any-screen-resolution */
+.video-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%; 
+  overflow: hidden;
+}
+
+.video-container video {
+  /* Make video to at least 100% wide and tall */
+  min-width: 100%; 
+  min-height: 100%; 
+
+  /* Setting width & height to auto prevents the browser from stretching or squishing the video */
+  width: 100%;
+  height: auto;
+
+  /* Center the video */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+/*END*/
+
+.hamburger,
+#compass{
+    opacity: 1;
+    transition: opacity 250ms ease-in-out
+}
+
+body .hide-controls .hamburger,
+body .hide-controls #compass{
+    opacity: 0;
+}
+
+.fs-modal h2 {
+    color: #fff;
+    text-align: center;
+    height: 50px;
+    line-height: 2em;
+    margin: .5rem 0;
+}
+
+#recenter{
+    width: 150px;
+    height: 50px;
+    background: rgba(255,255,255,.95);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    color: #222;
+    text-align: center;
+    position: fixed;
+    top: .5rem;
+    right: .5rem;
+    font-size: 22px;
+    border-radius: .4em;
+    line-height: 50px;
+    cursor: pointer;
+    transition: all 250ms ease-in-out
+}
+
+#recenter:hover,
+#recenter:active{
+    background: rgba(230,230,230,.95);
+}
+
+#recenter img {
+    height: 20px;
+    vertical-align: middle;
+    margin-top: -3px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.full-wrap{
+    height: 100%;
+    width: 100%
+}
+
+.btn.btn-success {
+    background: #4CAF50;
+    border: 1px solid #43A047;
+    color: white;
+}
+
+.btn.btn-success:hover,
+.btn.btn-success:active {
+    background: #43A047;
+    border: 1px solid #388E3C;
+    color: white;
+}
+
+#rotate_screen{
+    display: none
+}
+
+
+@media screen and (orientation:portrait) {
+    #rotate_screen{
+        display: block;
+        background: rgba(0,0,0,.95);
+        color: white;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 200
+    }
+}
+
+#rotate_screen .rotate-wrapper{
+  color: #333;
+  text-align: center;
+  background: #fff;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 90%;
+  left: 5%;
+  padding: 1em;
+  box-sizing: border-box;
+  border-radius: .4em;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+#rotate_screen .rotate-wrapper img{
+  width: 20%;
+}
+
+.settings-wrap{
+    text-align: center;
+    color: white;
+    background: rgba(255,255,255,.1);
+    height: calc(100vh - 88px);
+    padding-bottom: 1em;
+    overflow: auto;
+    display: block;
+    box-sizing: border-box;
+}
+
+.warning{
+    margin-top: 5px;
+    padding: .1em .4em;
+    background: #FF9800;
+    width: auto;
+    display: inline-block;
+    border-radius: .4em;
+}
+
+#save{
+    left: auto;
+    right: 1em;
+}
+
+.slider{
+    vertical-align: middle;
+}
+
+.compass-icon img {
+    height: 75%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+#compass.left::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 100%;
+    background: url("/img/chevron-left.svg"), linear-gradient(to right, rgb(76, 175, 80) 50%,rgba(255,255,255,0) 75%);
+    top: 0;
+    left: 0;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#compass.right::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 100%;
+    background: url("/img/chevron-right.svg"), linear-gradient(to right, rgba(255,255,255,0) 25%, rgb(76, 175, 80) 50%);
+    top: 0;
+    right: 0;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.hide-controls #open-fullscreen{
+    left: .5rem;
+    bottom: .5rem;
+}
+
+#pac-input {
+    width: 100%;
+    height: 100%;
+    font-size: 1rem;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+#pac-container {
+    width: 100%;
+    height: 100%;
+}
+
+body main #pac-card {
+    /* stylelint-disable */
+    /* We need to override Google styles on element*/
+    top: .5rem !important;
+    right: .5rem !important;
+    /* stylelint-enable */
+    height: 32px;
+    width: 30vw;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    border-radius: 0.4em
+}

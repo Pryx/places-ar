@@ -1,0 +1,24 @@
+[my site] ; There may be more than one section
+; remote FTP server
+
+;remote = ftp://<username>:<password>@<host>/<dir>
+
+; FTP passive mode
+passivemode = yes
+
+; local path (optional)
+local = places-ar/
+
+; run in test-mode? (can be enabled by option -t or --test too)
+test = no
+
+; files and directories to ignore
+ignore = ""
+
+; is allowed to delete remote files? (defaults to yes)
+allowdelete = yes
+
+preprocess = no
+
+; enable colored highlights? (defaults to autodetect)
+colors = yes

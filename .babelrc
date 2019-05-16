@@ -1,0 +1,11 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"targets": ">1% and last 2 versions, not IE > 0, not IE_Mob > 0, not op_mini > 0,  not dead"
+			}
+		]
+	],
+	"comments": false
+}
