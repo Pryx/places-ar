@@ -989,8 +989,11 @@ body .hide-controls #compass{
 }
 
 body main #pac-card {
+    /* stylelint-disable */
+    /* We need to override Google styles on element*/
     top: .5rem !important;
     right: .5rem !important;
+    /* stylelint-enable */
     height: 32px;
     width: 30vw;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
