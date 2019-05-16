@@ -30,6 +30,10 @@ export class Compass {
         this.pid = new PID_Controller(0.15, 0.04, 0.001);
         this.pid.setOutputLimits(-45, 45);
         window.pid = this.pid;
+
+        /**
+         * This interval samples data for the PID controller.
+         */
         setInterval(() => {
             if (this.lastAngle > 270 && this.pid.target < 90)
             {
@@ -88,13 +92,14 @@ export class Compass {
      * @returns {undefined}
      */
     setMarkerPosition(angle) {
-        //Shift to correct position
+        //Shift to correct position... -90 for landscape adjust, -45 because north marker is in half...
         angle -= 135;
         if (angle < 0) {
             angle += 360;
         }
         this.markerPos = angle;
 
+        // Switching north segment when rolling over
         if (!this.leftside) {
             if (this.markerPos < 90) {
                 this.renderMarker(this.markerPos, 360);
@@ -161,7 +166,9 @@ export class Compass {
             }
         }
 
+        // Switching north segment when rolling over
         if (realAngle > center && this.leftside) {
+            //Marker must handle the roll over too... Switching the positions is done by offset
             if (this.markerPos != null){
                 if (this.markerPos < 90) {
                     this.renderMarker(this.markerPos, 360);
@@ -169,10 +176,12 @@ export class Compass {
                     this.renderMarker(this.markerPos, 0);
                 }
             }
+
             this.slider.firstElementChild.style.transform = `translateX(${-inset}px)`;
             this.slider.lastElementChild.style.transform = ``;
             this.leftside = false;
         } else if (realAngle < center && !this.leftside) {
+            //Marker must handle the roll over too... Switching the positions is done by offset
             if (this.markerPos != null){
                 if (this.markerPos < 90) {
                     this.renderMarker(this.markerPos, 0);
@@ -180,6 +189,7 @@ export class Compass {
                     this.renderMarker(this.markerPos, -360);
                 }
             }
+            
             this.slider.lastElementChild.style.transform = `translateX(${inset}px)`;
             this.slider.firstElementChild.style.transform = ``;
             this.leftside = true;

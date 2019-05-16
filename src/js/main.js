@@ -22,6 +22,15 @@ class Main {
             this.settings = null;
             //TODO: Old browser... Show warning and crash.
         }
+        
+        var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        /**
+         * Fullscreen does not work in safari...
+         */
+        if (isSafari){
+            document.getElementById("open-fullscreen").style.display = 'none';
+        }
 
         this.runSetupWizard();
     }
@@ -100,7 +109,6 @@ class Main {
      * @returns {undefined}
      */
     initVideo() {
-        //TODO: Save & load settings
         let video = document.getElementById('video');
         navigator.getUserMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
@@ -117,7 +125,10 @@ class Main {
             let settings = { video: { width: width, height: height, facingMode: "environment" } };
             navigator.mediaDevices.getUserMedia(settings)
                 .then(stream => video.srcObject = stream)
-                .then(() => new Promise(resolve => video.onloadedmetadata = resolve))
+                .then(() => new Promise(resolve => {
+                    video.onloadedmetadata = resolve;
+                    video.play();
+                }))
                 .then(() => {
                     video.style.display = 'block';
                     document.getElementById("insufficient-permissions").classList.add("hide");
@@ -132,6 +143,7 @@ class Main {
                 video.src = stream;
                 video.style.display = 'block';
                 document.getElementById("insufficient-permissions").classList.add("hide");
+                video.play();
             }, (e) => {
                 console.error("Couldn't gain access to camera!", e);
                 Wizard.hideAllWizards();

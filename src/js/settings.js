@@ -3,7 +3,9 @@
  */
 export class Settings {
     /**
-     * Constructor sets the default values of member variables.
+     * Constructor sets the default values of member variables. Also initializes the event listeners
+     * for range sliders and the save event.
+     * @param {*} caller Caller object
      */
     constructor(caller) {
         this.caller = caller;
@@ -47,7 +49,8 @@ export class Settings {
     }
 
     /**
-     * 
+     * Sets the saved values to the inputs. 
+     * @returns {undefined}
      */
     init(){
         let elements = document.querySelectorAll(".slider input[type=range]")
@@ -91,7 +94,4 @@ export class Settings {
         });
     }
 
-    /*setMaximumAge(age){
-        navigator.geolocation.clearWatch();
-    }*/
 }

@@ -1,7 +1,6 @@
 <?php
-/*This constant is replaced by build system*/
-//TODO: Document the HTML
-    define('PLACES_AR_VER', '1.0.0-16-20190505-12ede72');
+  /*This constant is replaced by build system*/
+  define('PLACES_AR_VER', '1.0.0');
 ?>
 <!doctype html>
 <html lang="en">
@@ -18,13 +17,23 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
 </head>
-
 <body>
+  <!--
+    Places AR is an experimental web app that aims to provide users with means to locate places using Augmented Reality. 
+    The HTML is not that much documented, but the main sections are outlined by HTML comments. Enjoy :)
+  -->
+
+  <!--
+    Nobody should be using IE on mobile... :)
+  -->
   <!--[if IE]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
   <![endif]-->
 
   <noscript>
+    <!--
+      We do not work without JS, so warn anyone with it disabled
+    -->
     <section id="nojs" class="wizard">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -39,6 +48,9 @@
   </noscript>
 
   <main id="main">
+    <!--
+      The compass and compass marker displaying azimuth
+    -->
     <div id="compass">
       <div class="compass-slider">
         <div class="compass-segment">
@@ -58,6 +70,34 @@
         </div>
       </div>
     </div>
+
+    <!-- Basic information about selected place (name, distance and distance accuracy) -->
+    <section id="place-info">No place selected yet</section>
+
+    <!-- Notice to get user to rotate to landscape if portrait is used -->
+    <div id="rotate_screen">
+      <div class="rotate-wrapper">
+        <h2>Please rotate your screen to landscape mode</h2>
+        <img src="img/rotate.svg" alt="rotate">
+      </div>
+    </div>
+
+    <!-- Camera feed with container that is used for Firefox hack (problem with changing aspect ratio in FullScreen) -->
+    <div class="video-container">
+      <video id="video" width="100%" height="100%" autoplay class="hide" autoplay playsinline></video>
+    </div>
+    
+    <!-- Notice that is shown when video feed is not playing -->
+    <div id="insufficient-permissions">
+      <div class="vertically-center">
+        <h2>This app needs permission to use your location & camera to work.</h2>
+      </div>
+    </div>
+
+
+    <!--
+      The main UI controls that facilitate showing & closing settings & map & fullscreen
+    -->
     <div id="close-all" class="hamburger animate hide">
       <img src="img/x.svg" alt="Close">
     </div>
@@ -77,6 +117,22 @@
       <div class="bar bottom-right-1"></div>
       <div class="bar bottom-right-2"></div>
     </div>
+
+    <!-- This section contains all wizards & notices, starting with device motion API not enabled -->
+    <section id="device_motion_problem" class="wizard hide">
+      <div class="wizard-wrapper">
+        <div class="slide slide-nr0">
+          <div class="padded-wrap">
+            <h2>Device orientation disabled!</h2>
+            <p>This app needs device orientation to work properly. If you're using Safari it is disabled by default. Please enable it by going to:<br><br>
+            <strong>Settings</strong> → <strong>Safari</strong> and <strong><em>Enable</em> Motion & Orientation Access</strong></p>
+            <a class="btn btn-next error" href="./">Reload</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wizard for magnetometer calibration -->
     <section id="needs_calibration" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -88,6 +144,8 @@
         </div>
       </div>
     </section>
+
+    <!-- Permission error notice shown when someone declines camera or location access -->
     <section id="permission_error" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -99,6 +157,8 @@
         </div>
       </div>
     </section>
+
+    <!-- No media motice shown when no camera is detected -->
     <section id="no_media" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -110,6 +170,8 @@
         </div>
       </div>
     </section>
+
+    <!-- First time user wizard -->
     <section id="wizard" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -158,6 +220,8 @@
         </div>
       </div>
     </section>
+
+    <!-- Wizard for north approximation -->
     <section id="wizard-relative" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
@@ -200,7 +264,9 @@
         </div>
       </div>
     </section>
-    <section id="place-info">No place selected yet</section>
+    <!-- End of wizard section-->
+  
+    <!-- Settings modal window -->
     <section id="settings" class="hide fs-modal">
       <section class="padded-wrap">
         <div id="save" class="hamburger animate">
@@ -229,6 +295,7 @@
       </section>
     </section>
 
+    <!-- Place select modal window-->
     <section id="place-select" class="hide fs-modal">
       <div id="infowindow-content">
         <div class="pac-card" id="pac-card">
@@ -248,24 +315,10 @@
         <div id="recenter" class="noselect"><img src="img/crosshair.svg" alt="crosshair"> Recenter</div>
       </section>
     </section>
-    <div class="video-container">
-      <video id="video" width="100%" height="100%" autoplay class="hide"></video>
-    </div>
-    <div id="insufficient-permissions">
-      <div class="vertically-center">
-        <h2>This app needs permission to use your location & camera to work.</h2>
-      </div>
-    </div>
-    <div id="rotate_screen">
-      <div class="rotate-wrapper">
-        <h2>Please rotate your screen to landscape mode</h2>
-        <img src="img/rotate.svg" alt="rotate">
-      </div>
-    </div>
   </main>
+  <!-- END OF APP; SCRIPT LOADING-->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIJ0abeCpJQ909O8lEWj6lfpRngYtgFOM&libraries=places"></script>
   <script src="js/places-ar.min.js?ver=<?php echo PLACES_AR_VER;?>"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:400,700&amp;subset=latin-ext" rel="stylesheet">
 </body>
-
 </html>

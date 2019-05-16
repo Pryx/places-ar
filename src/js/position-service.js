@@ -56,6 +56,9 @@ export class PositionService{
         this.waitForFix = true;
         this.current = new Location();
         this.selected = new Location();
+        this.deviceMotionTimeout = setTimeout(() => {
+            new Wizard("#device_motion_problem", false, this);
+        }, 5000);
     }
 
     /**
@@ -104,6 +107,7 @@ export class PositionService{
         window.removeEventListener("deviceorientation", this.orientationHandler);
         clearTimeout(this.relativeTimeout);
         this.relativeAdjust = 0;
+
         window.addEventListener("deviceorientationabsolute", this.orientationHandler);
     }
 
@@ -246,6 +250,9 @@ export class PositionService{
      * @returns {undefined}
      */
     deviceOrientationChange(e) {
+        if (this.deviceMotionTimeout){
+            clearTimeout(this.deviceMotionTimeout);
+        }
         let adjust = 0;
 
         let alpha = e.alpha;
@@ -254,25 +261,26 @@ export class PositionService{
 
         let orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
         
-        if (!e.absolute && e.webkitCompassHeading){
+        if (e.webkitCompassHeading){
             document.querySelector("body").classList.remove("relative");
-            alpha = e.webkitCompassHeading;
-        }
+            this.current.bearing = 360 - e.webkitCompassHeading -90;
+        } else {
 
-        if (orientation === "landscape-primary" || orientation === "landscape-secondary") {
-            adjust = -90;
-        } else if (orientation === undefined) {
-            console.error("The orientation API isn't supported in this browser. Maybe too old?");
-        }
+            if (orientation === "landscape-primary" || orientation === "landscape-secondary") {
+                adjust = -90;
+            } else if (orientation === undefined) {
+                console.error("The orientation API isn't supported in this browser. Maybe too old?");
+            }
 
-        if (typeof alpha === "undefined" || alpha === null) {
-            return;
-        }
-        //document.getElementById("place-info").innerHTML = `${alpha} ${adjust} ${this.relativeAdjust}`;
-        this.current.bearing = alpha + adjust + this.relativeAdjust;
+            if (typeof alpha === "undefined" || alpha === null) {
+                return;
+            }
+            //document.getElementById("place-info").innerHTML = `${alpha} ${adjust} ${this.relativeAdjust}`;
+            this.current.bearing = alpha + adjust + this.relativeAdjust;
 
-        if (gamma > 0) {
-            this.current.bearing += 180;
+            if (gamma > 0) {
+                this.current.bearing += 180;
+            }
         }
 
         while (this.current.bearing < 0) {
@@ -282,6 +290,7 @@ export class PositionService{
         if (this.current.bearing > 360) {
             this.current.bearing = this.current.bearing % 360;
         }
+    
 
         this.compass.setAngle(360 - this.current.bearing);
     }
