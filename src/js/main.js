@@ -20,7 +20,7 @@ class Main {
             this.settings = new Settings(this);
         } else {
             this.settings = null;
-            //TODO: Old browser... Show warning and crash.
+            alert("You are using browser that is just too old :(");
         }
         
         var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -167,23 +167,6 @@ class Main {
         } else {
             element.classList.remove("on");
         }
-    }
-
-    /**
-     * Vibrates phone to notify user of location fix
-     * @param {Number} count Couns how many vibrations took place
-     * @returns {undefined}
-     */
-    static vibrateAlert(count) {
-        if (count == 4) {
-            return;
-        }
-
-        window.navigator.vibrate(400);
-
-        setTimeout(() => {
-            this.vibrateAlert(count + 1);
-        }, 600);
     }
 }
 

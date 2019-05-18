@@ -19,6 +19,14 @@ jobs:
       - run: 
           name: Lint
           command: make lint
+          
+      - run: 
+          name: Run tests
+          command: make test
+
+      - run: 
+          name: Deploy
+          command: make deploy PLACES_AR_CREDENTIALS="$PLACES_AR_CREDENTIALS" PLACES_AR_DEPLOY="$PLACES_AR_DEPLOY"
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}

@@ -37,7 +37,9 @@ deploy:
 	@ npm run build
 	@ cp -r src/* $(BUILD_FOLDER)
 	@ $(write_version)
-	@ php -f ./build_tools/deployment.phar plugin.deploy
+	@ [ $(PLACES_AR_DEPLOY) -eq  1 ] && sed -i 's|###replace###|'"${PLACES_AR_CREDENTIALS}"'|' ci.deploy
+	@ [ $(PLACES_AR_DEPLOY) -eq  1 ] && php -f ./build_tools/deployment.phar ci.deploy
+	@ [ $(PLACES_AR_DEPLOY) -neq  1 ]php -f ./build_tools/deployment.phar plugin.deploy
 	@ rm -rf $(BUILD_FOLDER)
 	@ tput setaf 3
 	@ tput smso

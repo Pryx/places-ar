@@ -719,10 +719,19 @@ body main#main #close-all{
 }
 
 #wizard .wizard-wrapper,
+#wizard_relative .wizard-wrapper,
 #device_motion_problem .wizard-wrapper{
     height: 300px;
     max-height: 100%;
     max-width: 100%;
+}
+
+#wizard{
+    z-index: 125;
+}
+
+#device_motion_problem{
+    z-index: 150;
 }
 
 #no_media .wizard-wrapper,

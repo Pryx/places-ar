@@ -2,6 +2,7 @@ import { Compass } from './compass';
 import { Location } from './location';
 import { Map } from './map';
 import { Wizard } from './wizard';
+import { MAD } from './stat_tools'
 /**
  * This makes it possible to convert number from degrees to radians.
  * @returns {Number} Degrees converted to radians
@@ -52,13 +53,19 @@ export class PositionService{
         });
 
         this.usefulLocationEventCount = 0;
+        this.calibrationData = [];
         this.relativeAdjust = 0;
-        this.waitForFix = true;
+        this.calibrationEnabled = false;
         this.current = new Location();
         this.selected = new Location();
+        this.alertFired = false;
         this.deviceMotionTimeout = setTimeout(() => {
             new Wizard("#device_motion_problem", false, this);
         }, 5000);
+
+        this.relativeTimeout = setTimeout(() => {
+            new Wizard("#wizard_relative", false, this);
+        }, 1000);
     }
 
     /**
@@ -136,21 +143,22 @@ export class PositionService{
             this.current.accuracy = position.coords.accuracy;
             this.current.elevationAccuracy = position.coords.altitudeAccuracy;
 
-            if (this.waitForFix && (isNaN(position.coords.heading) || position.coords.heading == null)) {
-                this.usefulLocationEventCount = 0;
-                this.relativeAdjust = 0;
-            } else if (this.waitForFix) {
+            if (this.calibrationEnabled && !isNaN(position.coords.heading) && position.coords.heading != null){
                 this.usefulLocationEventCount++;
 
-                if (Math.abs(this.relativeAdjust - position.coords.heading) > 10) {
-                    this.usefulLocationEventCount = 0;
-                }
+                this.calibrationData.push(position.coords.heading - this.current.bearing);
 
-                this.relativeAdjust = position.coords.heading;
+                this.dataWithoutOutliers = MAD(this.calibrationData);
 
-                if (this.usefulLocationEventCount > 3) {
-                    this.relativeAdjust = this.relativeAdjust - this.current.bearing - 90; //90 because of landscape adjust :)
-                    this.waitForFix = false;
+                document.getElementById("deviation").innerHTML = this.dataWithoutOutliers.standardDeviation().toFixed(1);
+                document.getElementById("event_count").innerHTML = this.dataWithoutOutliers.length;
+
+                document.getElementById("data1").innerHTML = this.relativeAdjust;
+                document.getElementById("data2").innerHTML = position.coords.heading;
+
+                if (this.dataWithoutOutliers.standardDeviation() < 10 && !this.alertFired) {
+                    Wizard.vibrateAlert(0);
+                    this.alertFired = true;
                 }
             }
 
@@ -259,39 +267,67 @@ export class PositionService{
         let beta = e.beta;
         let gamma = e.gamma;
 
+        //Polyfill for orientation
         let orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
         
         if (e.webkitCompassHeading){
             document.querySelector("body").classList.remove("relative");
-            this.current.bearing = 360 - e.webkitCompassHeading -90;
+            this.current.bearing = 360 - e.webkitCompassHeading - 90;
         } else {
 
             if (orientation === "landscape-primary" || orientation === "landscape-secondary") {
                 adjust = -90;
             } else if (orientation === undefined) {
-                console.error("The orientation API isn't supported in this browser. Maybe too old?");
+                console.error("The orientation API isn't supported in this browser. Maybe browser is too old?");
             }
 
             if (typeof alpha === "undefined" || alpha === null) {
                 return;
             }
-            //document.getElementById("place-info").innerHTML = `${alpha} ${adjust} ${this.relativeAdjust}`;
+
             this.current.bearing = alpha + adjust + this.relativeAdjust;
 
             if (gamma > 0) {
                 this.current.bearing += 180;
             }
-        }
+        }    
 
-        while (this.current.bearing < 0) {
-            this.current.bearing += 360;
-        }
-
-        if (this.current.bearing > 360) {
-            this.current.bearing = this.current.bearing % 360;
-        }
-    
+        this.current.bearing = this.normalizeBearing(this.current.bearing);
 
         this.compass.setAngle(360 - this.current.bearing);
+    }
+
+    /**
+     * Normalizes bearing to the 0-360° range
+     * @param {Number} bearing Bearing to be normalized
+     * @returns {Number} Normalized bearing
+     */
+    normalizeBearing(bearing){
+        while (bearing < 0) {
+            bearing += 360;
+        }
+
+        if (bearing > 360) {
+            bearing = bearing % 360;
+        }
+
+        return bearing;
+    }
+    
+    /**
+     * Starts the calibration process
+     * @returns {undefined}
+     */
+    startCalibration(){
+        this.calibrationEnabled = true;
+    }
+
+    /**
+     * Finishes the calibration process
+     * @returns {undefined}
+     */
+    endCalibration(){
+        this.calibrationEnabled = false;
+        this.relativeAdjust = this.dataWithoutOutliers.mean();
     }
 }

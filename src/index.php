@@ -1,9 +1,10 @@
 <?php
-  /*This constant is replaced by build system*/
-  define('PLACES_AR_VER', '1.0.0');
+/*This constant is replaced by build system*/
+define('PLACES_AR_VER', '1.0.0');
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -17,6 +18,7 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
   <!--
     Places AR is an experimental web app that aims to provide users with means to locate places using Augmented Reality. 
@@ -86,7 +88,7 @@
     <div class="video-container">
       <video id="video" width="100%" height="100%" autoplay class="hide" autoplay playsinline></video>
     </div>
-    
+
     <!-- Notice that is shown when video feed is not playing -->
     <div id="insufficient-permissions">
       <div class="vertically-center">
@@ -125,7 +127,7 @@
           <div class="padded-wrap">
             <h2>Device orientation disabled!</h2>
             <p>This app needs device orientation to work properly. If you're using Safari it is disabled by default. Please enable it by going to:<br><br>
-            <strong>Settings</strong> → <strong>Safari</strong> and <strong><em>Enable</em> Motion & Orientation Access</strong></p>
+              <strong>Settings</strong> → <strong>Safari</strong> and <strong><em>Enable</em> Motion & Orientation Access</strong></p>
             <a class="btn btn-next error" href="./">Reload</a>
           </div>
         </div>
@@ -201,7 +203,7 @@
           <div class="padded-wrap">
             <h2>Location</h2>
             <p>
-              We also need your permission to pinpoint your location. Otherwise we cannot tell where you are and 
+              We also need your permission to pinpoint your location. Otherwise we cannot tell where you are and
               that makes our job impossible.
               <img class="wizard-icon-big" src="img/map-pin.svg" alt="Map">
             </p>
@@ -222,7 +224,7 @@
     </section>
 
     <!-- Wizard for north approximation -->
-    <section id="wizard-relative" class="wizard hide">
+    <section id="wizard_relative" class="wizard hide">
       <div class="wizard-wrapper">
         <div class="slide slide-nr0">
           <div class="padded-wrap">
@@ -252,12 +254,10 @@
           <div class="padded-wrap">
             <h2>Calibration progress</h2>
             <p>
-              Keep walking until you are satisfied with the error margin. 
-              Current error margin is <strong id="error_margin">999</strong>
-              Based on <strong id="event_count">999</strong> location updates
-            </p>
-            <p>
-              Click finish to proceed to the app.
+              Keep walking until you are satisfied with the error margin, then click finish.<br>
+              Current deviation is <strong id="deviation">Waiting</strong>, based on <strong id="event_count">Waiting</strong> location updates.<br>
+              A<strong id="data1">Waiting</strong>, H<strong id="data2">Waiting</strong>, B<strong id="data3">Waiting</strong><br>
+              The app will vibrate when it thinks that it is good enough.
             </p>
           </div>
           <a class="btn btn-next finish" href="#finish">Finish</a>
@@ -265,7 +265,7 @@
       </div>
     </section>
     <!-- End of wizard section-->
-  
+
     <!-- Settings modal window -->
     <section id="settings" class="hide fs-modal">
       <section class="padded-wrap">
@@ -300,8 +300,7 @@
       <div id="infowindow-content">
         <div class="pac-card" id="pac-card">
           <div id="pac-container">
-            <input id="pac-input" type="text"
-                placeholder="Enter a location">
+            <input id="pac-input" type="text" placeholder="Enter a location">
           </div>
         </div>
         <img id="place-icon" src="" height="24" width="24">
@@ -318,7 +317,8 @@
   </main>
   <!-- END OF APP; SCRIPT LOADING-->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIJ0abeCpJQ909O8lEWj6lfpRngYtgFOM&libraries=places"></script>
-  <script src="js/places-ar.min.js?ver=<?php echo PLACES_AR_VER;?>"></script>
+  <script src="js/places-ar.min.js?ver=<?php echo PLACES_AR_VER; ?>"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:400,700&amp;subset=latin-ext" rel="stylesheet">
 </body>
+
 </html>
