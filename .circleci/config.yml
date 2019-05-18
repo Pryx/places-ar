@@ -24,18 +24,47 @@ jobs:
           name: Run tests
           command: make test
 
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+  deploy:
+    docker:
+      - image: pryx/goldenegg:latest
+
+    working_directory: ~/places-ar
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}  
+           
+      - run: 
+          name: Install depedencies
+          command: make setup
+
       - run: 
           name: Deploy
-          command: make deploy PLACES_AR_CREDENTIALS="$PLACES_AR_CREDENTIALS" PLACES_AR_DEPLOY="$PLACES_AR_DEPLOY"
+          command: make deploy-ci PLACES_AR_CREDENTIALS="$PLACES_AR_CREDENTIALS"
 
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
 
+
 workflows:
   version: 2
-  build_and_test:
+  test_and_deploy:
     jobs:
-
       - lint
+
+      - deploy:
+          requires:
+                - lint
+          filters: 
+            branches:
+              only:
+                - master

@@ -37,15 +37,32 @@ deploy:
 	@ npm run build
 	@ cp -r src/* $(BUILD_FOLDER)
 	@ $(write_version)
-	@ [ $(PLACES_AR_DEPLOY) -eq  1 ] && sed -i 's|###replace###|'"${PLACES_AR_CREDENTIALS}"'|' ci.deploy
-	@ [ $(PLACES_AR_DEPLOY) -eq  1 ] && php -f ./build_tools/deployment.phar ci.deploy
-	@ [ $(PLACES_AR_DEPLOY) -neq  1 ]php -f ./build_tools/deployment.phar plugin.deploy
+	@ php -f ./build_tools/deployment.phar plugin.deploy
 	@ rm -rf $(BUILD_FOLDER)
 	@ tput setaf 3
 	@ tput smso
 	@ echo " -- Deploy complete -- "
 	@ tput rmso
 	@ tput sgr0
+
+deploy-ci:
+	@ echo " -- Deploying PlacesAR -- "
+	@ $(clean)
+	@ $(get_build_date)
+	@ $(eval VERSION:="${VERSION_MAIN}-${REV_COUNT}-${BUILD_DATE}-`git log --pretty=format:'%h' -n 1`")
+	@ echo "ⓘ Version: ${VERSION}"
+	@ echo "Setting up workspace"
+	@ rm -rf $(BUILD_FOLDER)
+	@ mkdir $(BUILD_FOLDER)
+	@ echo "Building JS"
+	@ npm config set loglevel warn
+	@ npm run build
+	@ cp -r src/* $(BUILD_FOLDER)
+	@ $(write_version)
+	@ sed -i 's|###replace###|'"${PLACES_AR_CREDENTIALS}"'|' ci.deploy
+	@ php -f ./build_tools/deployment.phar ci.deploy
+	@ rm -rf $(BUILD_FOLDER)
+	@ echo " -- Deploy complete -- "
 
 ci:
 	@ $(get_build_date)
