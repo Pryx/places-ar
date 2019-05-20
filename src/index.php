@@ -242,7 +242,8 @@ define('PLACES_AR_VER', '1.0.0');
           <div class="padded-wrap">
             <h2>Calibration</h2>
             <p>
-              Please walk with your phone directly in front of you. The direction of your walk shouldn't be important.
+              Please walk with your phone directly in front of you. The direction of your walk shouldn't be important,
+              just walk in a straight line.
             </p>
             <p>
               Then click on the "Start calibration" button.
@@ -250,13 +251,12 @@ define('PLACES_AR_VER', '1.0.0');
           </div>
           <a class="btn btn-next" href="#next">Start calibration</a>
         </div>
-        <div class="slide slide-nr2 hide">
+        <div class="slide slide-nr2 hide" data-action="calibration_end">
           <div class="padded-wrap">
             <h2>Calibration progress</h2>
             <p>
-              Keep walking until you are satisfied with the error margin, then click finish.<br>
-              Current deviation is <strong id="deviation">Waiting</strong>, based on <strong id="event_count">Waiting</strong> location updates.<br>
-              A<strong id="data1">Waiting</strong>, H<strong id="data2">Waiting</strong>, B<strong id="data3">Waiting</strong><br>
+              Keep walking straight until you are satisfied with the location update count (more = better), then click finish.<br>
+              You're heading <strong id="heading">Waiting</strong>, based on <strong id="event_count">0</strong> location updates.<br>
               The app will vibrate when it thinks that it is good enough.
             </p>
           </div>

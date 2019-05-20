@@ -52,8 +52,10 @@ export class PositionService{
             this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
         });
 
+        this.bearingData = [];
+        this.headingData = [];
+
         this.usefulLocationEventCount = 0;
-        this.calibrationData = [];
         this.relativeAdjust = 0;
         this.calibrationEnabled = false;
         this.current = new Location();
@@ -91,13 +93,19 @@ export class PositionService{
      */
     reinitGeolocationWatcher(){
         navigator.geolocation.clearWatch(this.locationUpdateHandler);
+        let maxAge = window.localStorage.getItem("geoMaxAge");
+
+        if (this.calibrationEnabled)
+        {
+            maxAge = 0;
+        }
 
         this.locationUpdateHandler = navigator.geolocation.watchPosition(
             (e) => this.locationUpdate(e),
             this.locationUpdateFail,
             {
                 enableHighAccuracy: true, //We need high accuracy to be precise enough
-                maximumAge: window.localStorage.getItem("geoMaxAge"), //Get from settings
+                maximumAge: maxAge, //Get from settings
                 timeout: 60000 //1 minute
             }
         );
@@ -143,20 +151,19 @@ export class PositionService{
             this.current.accuracy = position.coords.accuracy;
             this.current.elevationAccuracy = position.coords.altitudeAccuracy;
 
-            if (this.calibrationEnabled && !isNaN(position.coords.heading) && position.coords.heading != null){
+            if (this.calibrationEnabled && 
+                !isNaN(position.coords.heading) && position.coords.heading != null  &&
+                !isNaN(position.coords.speed) && position.coords.speed > 1){
                 this.usefulLocationEventCount++;
 
-                this.calibrationData.push(position.coords.heading - this.current.bearing);
+                this.headingData.push(position.coords.heading);
+                this.bearingData.push(360 - this.current.bearing);
 
-                this.dataWithoutOutliers = MAD(this.calibrationData);
+                document.getElementById("event_count").innerHTML = this.usefulLocationEventCount;
+                document.getElementById("heading").innerHTML = this.headingData.mean();
 
-                document.getElementById("deviation").innerHTML = this.dataWithoutOutliers.standardDeviation().toFixed(1);
-                document.getElementById("event_count").innerHTML = this.dataWithoutOutliers.length;
-
-                document.getElementById("data1").innerHTML = this.relativeAdjust;
-                document.getElementById("data2").innerHTML = position.coords.heading;
-
-                if (this.dataWithoutOutliers.standardDeviation() < 10 && !this.alertFired) {
+                if (this.usefulLocationEventCount > 25 && !this.alertFired) 
+                {
                     Wizard.vibrateAlert(0);
                     this.alertFired = true;
                 }
@@ -264,7 +271,6 @@ export class PositionService{
         let adjust = 0;
 
         let alpha = e.alpha;
-        let beta = e.beta;
         let gamma = e.gamma;
 
         //Polyfill for orientation
@@ -315,19 +321,49 @@ export class PositionService{
     }
     
     /**
-     * Starts the calibration process
+     * Starts the calibration process and sets geolocation watcher to high speed
      * @returns {undefined}
      */
     startCalibration(){
         this.calibrationEnabled = true;
+        this.reinitGeolocationWatcher();
     }
 
     /**
-     * Finishes the calibration process
+     * Finishes the calibration process and resets geolocation watcher
      * @returns {undefined}
      */
     endCalibration(){
         this.calibrationEnabled = false;
-        this.relativeAdjust = this.dataWithoutOutliers.mean();
+        this.reinitGeolocationWatcher();
+        if (this.usefulLocationEventCount > 0)
+        {
+            if ((this.bearingData.some(e => e < 45) && this.bearingData.some(e => e > 315)) 
+                || (this.headingData.some(e => e < 45) && this.bearingData.some(e => e > 315)))
+            {
+                this.postProcessCalibrationData();
+            }
+            this.relativeAdjust = this.normalizeBearing(this.bearingData.mean() - this.headingData.mean());
+        }
+    }
+
+    /**
+     * Processes calibration data so that problems with overroll around north are eliminated
+     * @returns {Number[]} Processed data
+     */
+    postProcessCalibrationData(){
+        this.bearingData.forEach((el, id, arr) => {
+            if (el < 45){
+                el += 360;
+            }
+            arr[id] = el;
+        });
+
+        this.headingData.forEach((el, id, arr) => {
+            if (el < 45) {
+                el += 360;
+            }
+            arr[id] = el;
+        });
     }
 }

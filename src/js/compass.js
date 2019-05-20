@@ -35,8 +35,7 @@ export class Compass {
          * This interval samples data for the PID controller.
          */
         setInterval(() => {
-            if (this.lastAngle > 270 && this.pid.target < 90)
-            {
+            if (this.lastAngle > 270 && this.pid.target < 90) {
                 console.log("Skip animation right");
                 this.slider.style.transition = `none`;
                 this.angle = 0;
@@ -52,8 +51,7 @@ export class Compass {
                 });
                 this.lastAngle = 0;
                 return;
-            } else if (this.pid.target > 270 && this.lastAngle < 90)
-            {
+            } else if (this.pid.target > 270 && this.lastAngle < 90) {
 				console.log("Skip animation left");
 				this.slider.style.transition = `none`;
                 this.angle = 359.99;
