@@ -919,7 +919,7 @@ body .hide-controls #compass{
     text-align: center;
     color: white;
     background: rgba(255,255,255,.1);
-    height: calc(100vh - 88px);
+    min-height: calc(100vh - 66px);
     padding-bottom: 1em;
     overflow: auto;
     display: block;
@@ -937,7 +937,8 @@ body .hide-controls #compass{
 
 #save{
     left: auto;
-    right: 1em;
+    top: .5em;
+    right: .5em;
 }
 
 .slider{
@@ -1008,4 +1009,8 @@ body main #pac-card {
     width: 30vw;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     border-radius: 0.4em
+}
+
+slider:last-child {
+    margin-bottom: 2rem;
 }

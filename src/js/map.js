@@ -11,8 +11,7 @@ export class Map{
      * @param {Function} callback Callback for when user select different POI
      */
     constructor(callback){
-        let origin = {
-            lat: 50.0755381, lng: 14.4378005 };
+        let origin = { lat: 50.0755381, lng: 14.4378005 };
 
         let map = new google.maps.Map(document.getElementById('map'), {
             zoom: 14,
@@ -60,6 +59,8 @@ export class Map{
         };
 
         MapEventHandler.prototype.handleClick = function (event) {
+            google.maps.event.trigger(this.map, "resize");
+            document.getElementById("place-select").focus();
             if (event.placeId) {
                 event.stop();
                 this.getPlaceInformation(event.placeId);
@@ -103,9 +104,13 @@ export class Map{
         MapEventHandler.prototype.placesChanged = function () {
             let me = this;
             me.infowindow.close();
+            let exit = false;
 
             var places = this.autocomplete.getPlaces();
             places.forEach(function (place) {
+                if (exit){
+                    return;
+                }
                 if (!place.geometry) {
                     console.warn(`No geometry for ${place.name}`);
                     return;
@@ -118,11 +123,18 @@ export class Map{
                     me.map.setZoom(17);  // Why 17? Because it looks good.
                 }
 
+                temporary.longitude = place.geometry.location.lng();
+                temporary.latitude = place.geometry.location.lat();
+                temporary.name = place.name;
+
+                me.infowindow.close();
+                me.infowindow.setPosition(place.geometry.location);
                 me.infowindowContent.children['place-icon'].src = place.icon;
                 me.infowindowContent.children['place-name'].textContent = place.name;
                 me.infowindowContent.children['place-address'].textContent = place.formatted_address;
-
                 me.infowindow.open(me.map);
+                google.maps.event.trigger(me.map, "resize");
+                exit = true;
             });
         };
 
