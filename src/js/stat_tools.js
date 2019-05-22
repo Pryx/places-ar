@@ -1,6 +1,5 @@
 /**
  * Computes mean from array of numbers
- * @param {Number[]} numbers array of numbers
  * @returns {Number} Mean
  */
 Array.prototype.mean = function () {
@@ -13,7 +12,6 @@ Array.prototype.mean = function () {
 
 /**
  * Computes standard deviation from array of numbers
- * @param {Number[]} numbers array of numbers
  * @returns {Number} Standard deviation
  */
 Array.prototype.standardDeviation = function () {
@@ -26,7 +24,6 @@ Array.prototype.standardDeviation = function () {
 
 /**
  * Computes median from array of numbers
- * @param {Number[]} numbers array of numbers
  * @returns {Number} Median
  */
 Array.prototype.median = function () {
@@ -34,7 +31,7 @@ Array.prototype.median = function () {
         return NaN;
     }
 
-    let arr = this.slice(0).sort((a, b) => a - b);
+    let arr = this.slice(0).sort((a, b) => a - b); // slice for quick clone
     let half = ~~(arr.length / 2);
 
     return (arr.length % 2) ? arr[half] : (arr[half - 1] + arr[half]) / 2.0;

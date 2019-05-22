@@ -13,7 +13,7 @@ endef
 define clean
 	rm -f $(BUILD_FOLDER)/composer.json
 	rm -f $(BUILD_FOLDER)/composer.lock
-	bash -O extglob -c 'rm -rf $(BUILD_FOLDER)/js/!(vendor)/'
+	find $(BUILD_FOLDER)/js/. -type f -print0 | xargs --null grep -Z -L '.min.' | xargs --null rm
 	rm -rf $(BUILD_FOLDER)/js/.build
 endef
 
@@ -23,7 +23,6 @@ deploy:
 	@ echo " -- Deploying PlacesAR -- "
 	@ tput rmso
 	@ tput sgr0
-	@ $(clean)
 	@ $(get_build_date)
 	@ $(eval VERSION:="${VERSION_MAIN}-${REV_COUNT}-${BUILD_DATE}-`git log --pretty=format:'%h' -n 1`")
 	@ tput setaf 2
@@ -36,6 +35,9 @@ deploy:
 	@ npm config set loglevel warn
 	@ npm run build
 	@ cp -r src/* $(BUILD_FOLDER)
+	@ echo "Removing unwanted files"
+	@ $(clean)
+	@ rm -rf $(BUILD_FOLDER)/docs
 	@ $(write_version)
 	@ php -f ./build_tools/deployment.phar plugin.deploy
 	@ rm -rf $(BUILD_FOLDER)
@@ -47,7 +49,6 @@ deploy:
 
 deploy-ci:
 	@ echo " -- Deploying PlacesAR -- "
-	@ $(clean)
 	@ $(get_build_date)
 	@ $(eval VERSION:="${VERSION_MAIN}-${REV_COUNT}-${BUILD_DATE}-`git log --pretty=format:'%h' -n 1`")
 	@ echo "ⓘ Version: ${VERSION}"
@@ -58,6 +59,8 @@ deploy-ci:
 	@ npm config set loglevel warn
 	@ npm run build
 	@ cp -r src/* $(BUILD_FOLDER)
+	@ echo "Removing unwanted files"
+	@ $(clean)
 	@ $(write_version)
 	@ sed -i 's|###replace###|'"${PLACES_AR_CREDENTIALS}"'|' ci.deploy
 	@ php -f ./build_tools/deployment.phar ci.deploy
@@ -71,6 +74,8 @@ ci:
 	@ echo "ⓘ Version: ${VERSION}"
 	@ echo " -- Build is starting. -- "
 	@ echo "Setting up workspace"
+	@ echo "Generating documentation"
+	@ ./node_modules/.bin/esdoc
 	@ rm -rf $(BUILD_FOLDER)
 	@ mkdir $(BUILD_FOLDER)
 	@ echo "Building JS"

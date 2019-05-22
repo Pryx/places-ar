@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/js/compass.js | places-ar</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="places-ar"><meta property="twitter:description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Pryx/places-ar.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#js">js</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/compass.js~Compass.html">Compass</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/location.js~Location.html">Location</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/pid-controller.js~PID_Controller.html">PID_Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/position-service.js~PositionService.html">PositionService</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/wizard.js~Wizard.html">Wizard</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-MAD">MAD</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/js/compass.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { PID_Controller } from &quot;./pid-controller&quot;
+
+/**
+ * The compass class encapsulates logic around rendering the actual Compass
+ * based on device orientation data.
+ */
+export class Compass {
+    /**
+     * Creates a compass from a HTML element
+     * @param {Element} html HTML element
+     */
+    constructor(html) {
+        this.html = html;
+        this.slider = html.querySelector(&quot;.compass-slider&quot;);
+        /**
+         * Gets slider width
+         * @returns {Number} width
+         */
+        const setSliderWidth = () =&gt; this.WIDTH = this.slider.getBoundingClientRect().width;
+
+        setSliderWidth();
+        window.onresize = () =&gt; setSliderWidth();
+
+        this.angle = 0;
+        this.lastOffset = null;
+        this.markerPos = null;
+        this.lastAngle = 0;
+
+        this.leftside = true;
+        this.pid = new PID_Controller(0.15, 0.04, 0.001);
+        this.pid.setOutputLimits(-45, 45);
+        window.pid = this.pid;
+
+        /**
+         * This interval samples data for the PID controller.
+         */
+        setInterval(() =&gt; {
+            if (this.lastAngle &gt; 270 &amp;&amp; this.pid.target &lt; 90) {
+                console.log(&quot;Skip animation right&quot;);
+                this.slider.style.transition = `none`;
+                this.angle = 0;
+                window.requestAnimationFrame(() =&gt; {
+                    this.render();
+                    setTimeout(() =&gt; {
+                        this.slider.style.transition = ``;
+                        setTimeout(() =&gt; {
+                            this.angle += this.pid.compute(this.angle);
+                            window.requestAnimationFrame(() =&gt; this.render());
+                        }, 5);
+                    }, 1);
+                });
+                this.lastAngle = 0;
+                return;
+            } else if (this.pid.target &gt; 270 &amp;&amp; this.lastAngle &lt; 90) {
+				console.log(&quot;Skip animation left&quot;);
+				this.slider.style.transition = `none`;
+                this.angle = 359.99;
+				window.requestAnimationFrame(() =&gt; {
+                    this.render();
+                    setTimeout(() =&gt; {
+                        this.slider.style.transition = ``;
+                        setTimeout(() =&gt; {
+                            this.angle += this.pid.compute(this.angle);
+                            window.requestAnimationFrame(() =&gt; this.render());
+                        }, 5);
+                    }, 1);
+				});	
+                this.lastAngle = 359;
+                return;
+            }        
+
+            this.angle += this.pid.compute(this.angle);
+            window.requestAnimationFrame(() =&gt; this.render());
+            this.lastAngle = this.angle;
+        }, 40);
+    }
+
+    /**
+     * Sets rotation of the compass
+     * @param {Number} angle rotation (Degrees)
+     * @returns {undefined}
+     */
+    setAngle(angle) {
+        this.pid.setTarget(angle);
+    }
+
+    /**
+     * Sets the POI marker position on the compass
+     * @param {Number} angle position (Degrees)
+     * @returns {undefined}
+     */
+    setMarkerPosition(angle) {
+        //Shift to correct position... -90 for landscape adjust, -45 because north marker is in half...
+        angle -= 135;
+        if (angle &lt; 0) {
+            angle += 360;
+        }
+        this.markerPos = angle;
+
+        // Switching north segment when rolling over
+        if (!this.leftside) {
+            if (this.markerPos &lt; 90) {
+                this.renderMarker(this.markerPos, 360);
+            } else {
+                this.renderMarker(this.markerPos, 0);
+            }
+        } else if (this.leftside) {
+            if (this.markerPos &gt; 270) {
+                this.renderMarker(this.markerPos, -360);
+            } else {
+                this.renderMarker(this.markerPos, 0);
+            }
+        }
+    }
+
+    /**
+     * Renders the POI marker on the compass. Offset is used in case compass is near 0&#xB0;
+     * @param {Number} angle position (Degrees)
+     * @param {Number} offset offset (Degrees)
+     * @returns {undefined}
+     */
+    renderMarker(angle, offset) {
+        let precision = Math.pow(10, 3);
+
+        let realAngle = angle % 360;
+        realAngle += offset;
+        let pos = Math.floor((realAngle / 90 * this.WIDTH) * precision) / precision;
+
+        let marker = this.html.querySelector(&quot;#compass-icon&quot;);
+        marker.style.left = pos + &apos;px&apos;;
+        marker.style.display = &apos;block&apos;;
+    }
+
+    /**
+     * Renders the compass
+     * @returns {undefined}
+     */
+    render() {
+        let precision = Math.pow(10, 3);
+
+        let realAngle = this.angle % 360;
+        let offset = Math.floor((-1 * realAngle / 90 * this.WIDTH) * precision) / precision;
+
+        if (offset == this.lastOffset) {
+            return;
+        }
+
+        let inset = Math.floor((-4 * this.WIDTH) * precision) / precision;
+        let center = 180;
+
+        document.getElementById(&quot;compass&quot;).classList.remove(&quot;right&quot;);
+        document.getElementById(&quot;compass&quot;).classList.remove(&quot;left&quot;);
+        
+        let delta = this.angle - this.markerPos + 45;
+
+        if (this.markerPos != null){
+            if (Math.abs(Math.min(delta, 360 - delta)) &gt; 45)
+            {
+                if (delta &gt; 180 || delta &lt; 0) {
+                    document.getElementById(&quot;compass&quot;).classList.add(&quot;right&quot;);
+                } else {
+                    document.getElementById(&quot;compass&quot;).classList.add(&quot;left&quot;);
+                }
+            }
+        }
+
+        // Switching north segment when rolling over
+        if (realAngle &gt; center &amp;&amp; this.leftside) {
+            //Marker must handle the roll over too... Switching the positions is done by offset
+            if (this.markerPos != null){
+                if (this.markerPos &lt; 90) {
+                    this.renderMarker(this.markerPos, 360);
+                } else if (this.markerPos &gt; 270) {
+                    this.renderMarker(this.markerPos, 0);
+                }
+            }
+
+            this.slider.firstElementChild.style.transform = `translateX(${-inset}px)`;
+            this.slider.lastElementChild.style.transform = ``;
+            this.leftside = false;
+        } else if (realAngle &lt; center &amp;&amp; !this.leftside) {
+            //Marker must handle the roll over too... Switching the positions is done by offset
+            if (this.markerPos != null){
+                if (this.markerPos &lt; 90) {
+                    this.renderMarker(this.markerPos, 0);
+                } else if (this.markerPos &gt; 270) {
+                    this.renderMarker(this.markerPos, -360);
+                }
+            }
+            
+            this.slider.lastElementChild.style.transform = `translateX(${inset}px)`;
+            this.slider.firstElementChild.style.transform = ``;
+            this.leftside = true;
+        }
+
+        this.slider.style.transform = `translateX(${offset}px)`;
+
+        this.lastOffset = offset;
+    }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/js/main.js | places-ar</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="places-ar"><meta property="twitter:description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Pryx/places-ar.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#js">js</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/compass.js~Compass.html">Compass</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/location.js~Location.html">Location</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/pid-controller.js~PID_Controller.html">PID_Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/position-service.js~PositionService.html">PositionService</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/wizard.js~Wizard.html">Wizard</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-MAD">MAD</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/js/main.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { PositionService } from &apos;./position-service&apos;;
+import { Settings } from &apos;./settings&apos;;
+import { Wizard } from &apos;./wizard&apos;;
+
+window.debug = true;
+
+/**
+ * Main class that handles all the basic functionality of
+ * the web app like buttons and initializes other components
+ * like the Compass, Settings or Map.
+ */
+class Main {
+    /**
+     * Constructor creates new Position object and initializes the app.
+     */
+    constructor(){
+        this.positionService = new PositionService();
+        
+        if (typeof (Storage) !== &quot;undefined&quot;) {
+            this.settings = new Settings(this);
+        } else {
+            this.settings = null;
+            alert(&quot;You are using browser that is just too old :(&quot;);
+        }
+        
+        var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        /**
+         * Fullscreen does not work in safari...
+         */
+        if (isSafari){
+            document.getElementById(&quot;open-fullscreen&quot;).style.display = &apos;none&apos;;
+        }
+
+        this.runSetupWizard();
+    }
+
+    /**
+     * Runs setup wizard if setup hasn&apos;t been completed yet
+     * @returns {undefined}
+     */
+    runSetupWizard(){
+        this.setupWizard = new Wizard(&quot;#wizard&quot;, true, this);
+        
+        if (!this.setupWizard.wasRun){
+            this.initVideo();
+            this.positionService.initGeolocationWatcher();
+        }
+    }
+
+    /**
+     * Binds event handlers to events for basic GUI operations.
+     * @returns {undefined}
+     */
+    initEvents(){
+        document.addEventListener(&quot;fullscreenchange&quot;, this.fullScreenChange);
+
+        document.getElementById(&quot;open-settings&quot;).addEventListener(&quot;click&quot;, function (e) {
+            this.classList.toggle(&quot;animate&quot;);
+            document.getElementById(&quot;settings&quot;).classList.toggle(&quot;hide&quot;);
+            document.querySelector(&quot;body&quot;).classList.add(&quot;hide-controls&quot;);
+            document.querySelector(&quot;#close-all&quot;).classList.remove(&quot;hide&quot;);
+        });
+
+        document.getElementById(&quot;open-map&quot;).addEventListener(&quot;click&quot;, function (e) {
+            this.classList.toggle(&quot;animate&quot;);
+            document.getElementById(&quot;place-select&quot;).classList.toggle(&quot;hide&quot;);
+            document.querySelector(&quot;body&quot;).classList.add(&quot;hide-controls&quot;);
+            document.querySelector(&quot;#close-all&quot;).classList.remove(&quot;hide&quot;);
+        });
+
+        document.getElementById(&quot;close-all&quot;).addEventListener(&quot;click&quot;, function (e) {
+            document.querySelector(&quot;body&quot;).classList.remove(&quot;hide-controls&quot;);
+            document.querySelector(&quot;.fs-modal:not(.hide)&quot;).classList.add(&quot;hide&quot;);
+            document.querySelector(&quot;#close-all&quot;).classList.add(&quot;hide&quot;);
+        });
+        
+        /**
+        * Click handler for the fullscreen button. Uses the JavaScript
+        * FullScreen API. Basic support is present in most major browsers.
+        */
+        document.getElementById(&quot;open-fullscreen&quot;).addEventListener(&quot;click&quot;, function () {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                if (document.fullscreenEnabled) {
+                    document.getElementById(&quot;main&quot;).requestFullscreen({ navigationUI: &quot;hide&quot; });
+
+                    //Screen orientation lock. Works only on Progressive Web App
+                    screen.lockOrientationUniversal = screen.lockOrientation || 
+                        screen.mozLockOrientation || screen.msLockOrientation;
+
+                    if (screen.lockOrientationUniversal(&quot;landscape-primary&quot;)) {
+                        console.log(&quot;Screen orientation locked&quot;);
+                    } else {
+                        console.log(&quot;Screen orientation lock failed&quot;);
+                    }
+                } else {
+                    console.warn(&quot;Fullscreen not supported&quot;);
+                }
+            }
+        });
+    }
+
+    /**
+     * This function initializes the video stream from the environment-facing
+     * camera. Uses the getUserMedia/Stream API present in all current browsers.
+     * Uses quality set in app settings. 
+     * @returns {undefined}
+     */
+    initVideo() {
+        let video = document.getElementById(&apos;video&apos;);
+        navigator.getUserMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia);
+        
+        let height = screen.height * window.devicePixelRatio * window.localStorage.getItem(&quot;videoQuality&quot;);
+        let width = screen.width * window.devicePixelRatio * window.localStorage.getItem(&quot;videoQuality&quot;);
+
+        if (navigator.mediaDevices &amp;&amp; navigator.mediaDevices.getUserMedia) {
+            console.info(`Screen: ${width}x${height}  Multiplier: ${window.devicePixelRatio}
+                Quality: ${window.localStorage.getItem(&quot;videoQuality&quot;)}`);
+
+            let settings = { video: { width: width, height: height, facingMode: &quot;environment&quot; } };
+            navigator.mediaDevices.getUserMedia(settings)
+                .then(stream =&gt; video.srcObject = stream)
+                .then(() =&gt; new Promise(resolve =&gt; {
+                    video.onloadedmetadata = resolve;
+                    video.play();
+                }))
+                .then(() =&gt; {
+                    video.style.display = &apos;block&apos;;
+                    document.getElementById(&quot;insufficient-permissions&quot;).classList.add(&quot;hide&quot;);
+                })
+                .catch(e =&gt; {
+                    console.error(&quot;Couldn&apos;t gain access to camera!&quot;, e);
+                    Wizard.hideAllWizards();
+                    new Wizard(&quot;#permission_error&quot;);
+                });
+        } else if (navigator.getUserMedia){
+            navigator.getUserMedia({ video: { width: width, height: height}}, (stream) =&gt; {
+                video.src = stream;
+                video.style.display = &apos;block&apos;;
+                document.getElementById(&quot;insufficient-permissions&quot;).classList.add(&quot;hide&quot;);
+                video.play();
+            }, (e) =&gt; {
+                console.error(&quot;Couldn&apos;t gain access to camera!&quot;, e);
+                Wizard.hideAllWizards();
+                new Wizard(&quot;#permission_error&quot;);
+            });
+        } else {
+            console.warn(&quot;No media devices found!&quot;);
+            Wizard.hideAllWizards();
+            new Wizard(&quot;#no_media&quot;);
+        }
+    }
+    /**
+     * fullScreenChange handles fullscreen events and updates
+     * the fullscreen toggle button accordingly.
+     * @returns {undefined}
+     */
+    fullScreenChange() {
+        let element = document.getElementById(&quot;open-fullscreen&quot;);
+        if (document.fullscreenElement) {
+            element.classList.add(&quot;on&quot;);
+        } else {
+            element.classList.remove(&quot;on&quot;);
+        }
+    }
+}
+
+(function (){
+    let main = new Main();
+    main.initEvents();  
+})();</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

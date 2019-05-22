@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/js/wizard.js | places-ar</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="places-ar"><meta property="twitter:description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Pryx/places-ar.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#js">js</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/compass.js~Compass.html">Compass</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/location.js~Location.html">Location</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/pid-controller.js~PID_Controller.html">PID_Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/position-service.js~PositionService.html">PositionService</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/wizard.js~Wizard.html">Wizard</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-MAD">MAD</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/js/wizard.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * Wizard class starts and handles the wizards that are displayed on first start and when location fix is needed
+ */
+export class Wizard{
+    /**
+     * Initializes the wizard, if run once is true, checks whether wizard already ran using WebStorage.
+     * @param {String} selector string selector
+     * @param {Boolean} runOnce whether to run wizard only once
+     * @param {Object} caller caller object
+     */
+    constructor(selector, runOnce, caller){
+        this.selector = selector;
+        this.baseElement = document.querySelector(selector);
+        this.runOnce = runOnce;
+        this.caller = caller;
+        if (runOnce &amp;&amp; window.localStorage.getItem(`wizard${selector}`)){
+            this.wasRun = false;
+            return;
+        }
+
+        this.wasRun = true;
+        this.baseElement.classList.remove(&quot;hide&quot;);
+
+        let elements = document.querySelectorAll(`${selector} .btn-next`);
+        this.slide = 0;
+        let wizard = this;
+
+        document.querySelector(&quot;body&quot;).classList.add(&quot;hide-controls&quot;);
+
+        elements.forEach(element =&gt; {
+            element.addEventListener(&quot;click&quot;, function (e) {
+                e.preventDefault();
+                
+                let href = this.getAttribute(&quot;href&quot;);
+                let slide = this.closest(&quot;.slide&quot;);    
+                let action = slide.getAttribute(&quot;data-action&quot;);
+
+                switch (action) {
+                    case &quot;camera&quot;:
+                        caller.initVideo();
+                        break;
+
+                    case &quot;location&quot;:
+                        caller.positionService.initGeolocationWatcher();
+                        break;
+
+                    case &quot;calibration&quot;:
+                        caller.startCalibration();
+                        break;
+
+                    case &quot;calibration_end&quot;:
+                        caller.endCalibration();
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (href == &quot;#finish&quot; || href == &quot;./&quot;)
+                {
+                    wizard.finished();
+                    return false;
+                }     
+
+                wizard.slide++;
+
+                let nextSlide = wizard.baseElement.querySelector(`.slide-nr${wizard.slide}`);       
+
+                //wizard.vibrateAlert(0);
+
+                
+
+                slide.classList.add(&quot;hide&quot;);
+                nextSlide.classList.remove(&quot;hide&quot;);
+            });
+        });
+    }
+
+    /**
+     * Hides the wizard and if it should be run only once, writes true to WebStorage.
+     * @returns {undefined}
+     */
+    finished(){
+        if (this.runOnce){
+            window.localStorage.setItem(`wizard${this.selector}`, true);
+        }
+        
+        document.querySelector(&quot;body&quot;).classList.remove(&quot;hide-controls&quot;);
+        this.baseElement.classList.add(&quot;hide&quot;);
+    }
+
+    /**
+     * Hides all wizards
+     * @returns {undefined}
+     */
+    static hideAllWizards(){
+        const elements = document.querySelectorAll(&quot;.wizard&quot;);
+        elements.forEach(el =&gt; {
+            if (!el.classList.contains(&quot;hide&quot;)){
+                el.classList.add(&quot;hide&quot;);
+            }
+        });
+    }
+
+    /**
+     * Vibrates phone to notify user of location fix
+     * @param {Number} count Couns how many vibrations took place
+     * @returns {undefined}
+     */
+    static vibrateAlert(count) {
+        if (count == 4) {
+            return;
+        }
+
+        window.navigator.vibrate(400);
+
+        setTimeout(() =&gt; {
+            this.vibrateAlert(count + 1);
+        }, 600);
+    }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

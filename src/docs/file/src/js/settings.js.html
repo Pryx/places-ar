@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/js/settings.js | places-ar</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="places-ar"><meta property="twitter:description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Pryx/places-ar.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#js">js</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/compass.js~Compass.html">Compass</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/location.js~Location.html">Location</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/pid-controller.js~PID_Controller.html">PID_Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/position-service.js~PositionService.html">PositionService</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/wizard.js~Wizard.html">Wizard</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-MAD">MAD</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/js/settings.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * This class manages settings and applying them. 
+ */
+export class Settings {
+    /**
+     * Constructor sets the default values of member variables. Also initializes the event listeners
+     * for range sliders and the save event.
+     * @param {*} caller Caller object
+     */
+    constructor(caller) {
+        this.caller = caller;
+        this.setDefaults();
+        this.init();
+
+        let elements = document.querySelectorAll(&quot;.slider input[type=range]&quot;)
+        elements.forEach(el =&gt; {    
+            el.addEventListener(&quot;input&quot;, (e) =&gt;{
+                e.currentTarget.closest(&quot;.slider&quot;).querySelector(&quot;input[type=number]&quot;).value = e.currentTarget.value;
+            });
+        });
+        
+        elements = document.querySelectorAll(&quot;.slider input[type=number]&quot;)
+        elements.forEach(el =&gt; {
+            el.addEventListener(&quot;change&quot;, (e) =&gt; {
+                e.currentTarget.closest(&quot;.slider&quot;).querySelector(&quot;input[type=range]&quot;).value = e.currentTarget.value;
+            });
+        });
+
+        document.getElementById(&quot;save&quot;).addEventListener(&quot;click&quot;, (e) =&gt;{
+            this.saveSettings();
+            document.querySelector(&quot;body&quot;).classList.remove(&quot;hide-controls&quot;);
+            document.getElementById(&quot;close-all&quot;).classList.add(&quot;hide&quot;);
+            document.getElementById(&quot;settings&quot;).classList.add(&quot;hide&quot;);
+        });
+    }
+
+    /**
+     * If not defined yet, set the default values of settings
+     * @returns {undefined}
+     */
+    setDefaults(){
+        if (!window.localStorage.getItem(&quot;geoMaxAge&quot;)) {
+            window.localStorage.setItem(&apos;geoMaxAge&apos;, 1);
+        }
+
+        if (!window.localStorage.getItem(&quot;videoQuality&quot;)) {
+            window.localStorage.setItem(&apos;videoQuality&apos;, 1);
+        }
+    }
+
+    /**
+     * Sets the saved values to the inputs. 
+     * @returns {undefined}
+     */
+    init(){
+        let elements = document.querySelectorAll(&quot;.slider input[type=range]&quot;)
+        elements.forEach(el =&gt; {
+            let value = window.localStorage.getItem(el.name);
+            el.value = value;
+            el.closest(&quot;.slider&quot;).querySelector(&quot;input[type=number]&quot;).value = value;
+        });
+    }
+
+    /**
+     * Saves settings and does all actions needed to apply them.
+     * @returns {undefined}
+     */
+    saveSettings(){
+        let elements = document.querySelectorAll(&quot;.slider input[type=range]&quot;)
+        elements.forEach(el =&gt; {
+            if (window.localStorage.getItem(el.name) != el.value)
+            {
+                window.localStorage.setItem(el.name, el.value);
+            } else {
+                return;
+            }
+
+            console.info(`Updating ${el.name} to ${el.value}`);
+
+            switch (el.name) {
+                case &quot;videoQuality&quot;:
+                    this.caller.initVideo();        
+                    break;
+                
+                case &quot;geoMaxAge&quot;:
+                    this.caller.positionService.reinitGeolocationWatcher();
+                    break;
+            
+                default:
+                    break;
+            }
+            
+            
+        });
+    }
+
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

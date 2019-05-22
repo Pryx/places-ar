@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/js/position-service.js | places-ar</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="places-ar"><meta property="twitter:description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Pryx/places-ar.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#js">js</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/compass.js~Compass.html">Compass</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/location.js~Location.html">Location</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/pid-controller.js~PID_Controller.html">PID_Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/position-service.js~PositionService.html">PositionService</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/wizard.js~Wizard.html">Wizard</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-MAD">MAD</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/js/position-service.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Compass } from &apos;./compass&apos;;
+import { Location } from &apos;./location&apos;;
+import { Map } from &apos;./map&apos;;
+import { Wizard } from &apos;./wizard&apos;;
+import { MAD } from &apos;./stat_tools&apos;
+/**
+ * This makes it possible to convert number from degrees to radians.
+ * @returns {Number} Degrees converted to radians
+ */
+Number.prototype.toRad = function () {
+    return this * Math.PI / 180;
+}
+/**
+ * This makes it possible to convert number from radians to degrees.
+ * @returns {Number} Radians converted to degrees
+ */
+Number.prototype.toDeg = function () {
+    return this * 180 / Math.PI;
+}
+
+/**
+ * This class encapsulates everything related to position. Contains
+ * current position and selected POI position.
+ */
+export class PositionService{
+    /**
+     * The constructor binds device orientation events and creates the Compass and Map
+     * objects. Also Geolocation watcher and Location is initialized here.
+     * @see {Compass}
+     * @see {Map}
+     * @see {Location}
+     */
+    constructor(){
+        this.switchHandler = () =&gt; this.listenerSwitch();
+        this.orientationHandler = (e) =&gt; this.deviceOrientationChange(e);
+        window.addEventListener(&quot;deviceorientationabsolute&quot;, this.switchHandler);
+        window.addEventListener(&quot;deviceorientation&quot;, this.orientationHandler);
+
+        window.addEventListener(&quot;compassneedscalibration&quot;, () =&gt; {
+            new Wizard(&quot;#needs_calibration&quot;, false, this);
+        }, true);
+
+        this.compass = new Compass(document.getElementById(&quot;compass&quot;));
+        
+        if (window.debug) {
+            document.onmousemove = e =&gt; {
+                this.compass.setAngle((e.clientX / window.innerWidth * 720) % 360);
+            }
+        }
+
+        document.getElementById(&quot;recenter&quot;).addEventListener(&quot;click&quot;, (e) =&gt; {
+            this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
+        });
+
+        this.bearingData = [];
+        this.headingData = [];
+
+        this.usefulLocationEventCount = 0;
+        this.relativeAdjust = 0;
+        this.calibrationEnabled = false;
+        this.current = new Location();
+        this.selected = new Location();
+        this.alertFired = false;
+        this.deviceMotionTimeout = setTimeout(() =&gt; {
+            new Wizard(&quot;#device_motion_problem&quot;, false, this);
+        }, 5000);
+
+        this.relativeTimeout = setTimeout(() =&gt; {
+            new Wizard(&quot;#wizard_relative&quot;, false, this);
+        }, 1000);
+    }
+
+    /**
+     * Initializes the geolocation watcher. Uses Max Age set in settings.
+     * @returns {undefined}
+     */
+    initGeolocationWatcher(){
+        this.locationUpdateHandler = navigator.geolocation.watchPosition(
+            (e) =&gt; this.locationUpdate(e),
+            this.locationUpdateFail, 
+            {
+                enableHighAccuracy: true, //We need high accuracy to be precise enough
+                maximumAge: window.localStorage.getItem(&quot;geoMaxAge&quot;), //Get from settings
+                timeout: 60000 //1 minute
+            }
+        );
+        this.map = new Map((location) =&gt; this.confirmSelect(location));
+    }
+
+    /**
+     * Reinitializes geolocation watcher
+     * @returns {undefined}
+     */
+    reinitGeolocationWatcher(){
+        navigator.geolocation.clearWatch(this.locationUpdateHandler);
+        let maxAge = window.localStorage.getItem(&quot;geoMaxAge&quot;);
+
+        if (this.calibrationEnabled)
+        {
+            maxAge = 0;
+        }
+
+        this.locationUpdateHandler = navigator.geolocation.watchPosition(
+            (e) =&gt; this.locationUpdate(e),
+            this.locationUpdateFail,
+            {
+                enableHighAccuracy: true, //We need high accuracy to be precise enough
+                maximumAge: maxAge, //Get from settings
+                timeout: 60000 //1 minute
+            }
+        );
+    }
+
+    /**
+     * This function turns off the relative position deviceorientation listener if the
+     * deviceorientationabsolute is provided by the browser.
+     * @returns {undefined}
+     */
+    listenerSwitch() {
+        document.getElementById(&quot;compass&quot;).classList.add(&quot;isAbsoluteEvent&quot;);
+        window.removeEventListener(&quot;deviceorientationabsolute&quot;, this.switchHandler);
+        window.removeEventListener(&quot;deviceorientation&quot;, this.orientationHandler);
+        clearTimeout(this.relativeTimeout);
+        this.relativeAdjust = 0;
+
+        window.addEventListener(&quot;deviceorientationabsolute&quot;, this.orientationHandler);
+    }
+
+    /**
+     * This function is run after user selects new POI to update the Position
+     * object with the new one and recompute all important data.
+     * @param {Location} newPOI Updated POI location
+     * @see {Location}
+     * @returns {undefined}
+     */
+    confirmSelect(newPOI){
+        this.selected = newPOI;
+        this.locationUpdate(null);
+    }
+
+    /**
+     * Event handler for the GeolocationWatcher that recomputes distance and updates bearing.
+     * @param {Position} position New position provided by the watcher
+     * @returns {undefined}
+     */
+    locationUpdate(position) {
+        if (position != null) {
+            this.current.latitude = position.coords.latitude;
+            this.current.longitude = position.coords.longitude;
+            this.current.elevation = position.coords.altitude;
+            this.current.accuracy = position.coords.accuracy;
+            this.current.elevationAccuracy = position.coords.altitudeAccuracy;
+
+            if (this.calibrationEnabled &amp;&amp; 
+                !isNaN(position.coords.heading) &amp;&amp; position.coords.heading != null  &amp;&amp;
+                !isNaN(position.coords.speed) &amp;&amp; position.coords.speed &gt; 1){
+                this.usefulLocationEventCount++;
+
+                this.headingData.push(position.coords.heading);
+                this.bearingData.push(360 - this.current.bearing);
+
+                document.getElementById(&quot;event_count&quot;).innerHTML = this.usefulLocationEventCount;
+                document.getElementById(&quot;heading&quot;).innerHTML = this.headingData.mean();
+
+                if (this.usefulLocationEventCount &gt; 25 &amp;&amp; !this.alertFired) 
+                {
+                    Wizard.vibrateAlert(0);
+                    this.alertFired = true;
+                }
+            }
+
+            if (!document.querySelector(&quot;body&quot;).classList.contains(&quot;hide-controls&quot;)) {
+                this.map.setCenter({ lat: this.current.latitude, lng: this.current.longitude });
+            }
+        }
+
+        if (isNaN(this.selected.latitude) || isNaN(this.selected.longitude) || 
+            isNaN(this.current.latitude) || isNaN(this.current.longitude)) {
+            return;
+        }
+
+        let distance = PositionService.distanceFromCoords(this.current, this.selected);
+        let bearing = PositionService.absBearing(this.selected, this.current);
+
+        document.getElementById(&quot;place-info&quot;).innerHTML = `&lt;span id=&quot;location-name&quot;&gt;${this.selected.name}&lt;/span&gt;&lt;br&gt;
+            &lt;span id=&quot;place-distance&quot;&gt;
+                ${PositionService.formatDistance(distance)} (&#xB1; ${PositionService.formatDistance(this.current.accuracy)})
+            &lt;/span&gt;`;
+
+        this.compass.setMarkerPosition(bearing);
+    }
+
+    /**
+     * Location error handler
+     * @param {PositionError} error Object describing the error
+     * @returns {undefined}
+     */
+    locationUpdateFail(error) {
+        console.error(`Location update failed! ID: ${error.code} Message: ${error.message}`);
+    }
+
+    /**
+     * Makes a formatted string (metric system) from a number representing the distance in meters.
+     * @param {Number} distance Distance in meters
+     * @returns {String} formatted string
+     */
+    static formatDistance(distance) {
+        if (distance &gt;= 1000) {
+            return `${parseFloat((distance / 1000).toFixed(2))} km`;
+        } else {
+            return `${parseFloat((distance).toFixed(2))} m`;
+        }
+    }
+
+    /**
+     * Computes distance between two locations using the Haversine formula
+     * @param {Location} coords1 First location
+     * @param {Location} coords2 Second location
+     * @see {Location}
+     * @returns {Number} Distance in meters
+     */
+    static distanceFromCoords(coords1, coords2) {
+        let R = 6371e3; // m
+
+        let x1 = coords2.latitude - coords1.latitude;
+        let x2 = coords2.longitude - coords1.longitude;
+
+        let delta = { latitude: 0, longitude: 0 };
+        delta.latitude = x1.toRad();
+        delta.longitude = x2.toRad();
+
+        let a = Math.sin(delta.latitude / 2) * Math.sin(delta.latitude / 2) +
+            Math.cos(coords1.latitude.toRad()) * Math.cos(coords2.latitude.toRad()) *
+            Math.sin(delta.longitude / 2) * Math.sin(delta.longitude / 2);
+
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+
+    /**
+     * Computes bearing between two locations
+     * @param {Location} coords1 First location (from)
+     * @param {Location} coords2 Second location (where)
+     * @see {Location}
+     * @returns {Number} Bearing (counterclockwise from north)
+     */
+    static absBearing(coords1, coords2) {
+        let delta = { latitude: 0, longitude: 0 };
+
+        delta.longitude = (coords2.longitude - coords1.longitude);
+
+        let y = Math.sin(delta.longitude.toRad()) * Math.cos(coords2.latitude.toRad());
+
+        let x = (Math.cos(coords1.latitude.toRad()) * Math.sin(coords2.latitude.toRad())) - 
+            (Math.sin(coords1.latitude.toRad()) * Math.cos(coords2.latitude.toRad()) * Math.cos(delta.longitude.toRad()));
+        let bearing = Math.atan2(y, x).toDeg();
+        return (bearing + 360) % 360;
+    }
+
+    /**
+     * Device orientation change event handler. Normalizes the values and updates compass accordingly.
+     * If position is relative, then it displays warning.
+     * @param {DeviceMotionEvent} e DeviceMotionEvent
+     * @returns {undefined}
+     */
+    deviceOrientationChange(e) {
+        if (this.deviceMotionTimeout){
+            clearTimeout(this.deviceMotionTimeout);
+        }
+        let adjust = 0;
+
+        let alpha = e.alpha;
+        let gamma = e.gamma;
+
+        //Polyfill for orientation
+        let orientation = screen.msOrientation || (screen.orientation || screen.mozOrientation || {}).type;
+        
+        if (e.webkitCompassHeading){
+            document.querySelector(&quot;body&quot;).classList.remove(&quot;relative&quot;);
+            this.current.bearing = 360 - e.webkitCompassHeading - 90;
+        } else {
+
+            if (orientation === &quot;landscape-primary&quot; || orientation === &quot;landscape-secondary&quot;) {
+                adjust = -90;
+            } else if (orientation === undefined) {
+                console.error(&quot;The orientation API isn&apos;t supported in this browser. Maybe browser is too old?&quot;);
+            }
+
+            if (typeof alpha === &quot;undefined&quot; || alpha === null) {
+                return;
+            }
+
+            this.current.bearing = alpha + adjust + this.relativeAdjust;
+
+            if (gamma &gt; 0) {
+                this.current.bearing += 180;
+            }
+        }    
+
+        this.current.bearing = this.normalizeBearing(this.current.bearing);
+
+        this.compass.setAngle(360 - this.current.bearing);
+    }
+
+    /**
+     * Normalizes bearing to the 0-360&#xB0; range
+     * @param {Number} bearing Bearing to be normalized
+     * @returns {Number} Normalized bearing
+     */
+    normalizeBearing(bearing){
+        while (bearing &lt; 0) {
+            bearing += 360;
+        }
+
+        if (bearing &gt; 360) {
+            bearing = bearing % 360;
+        }
+
+        return bearing;
+    }
+    
+    /**
+     * Starts the calibration process and sets geolocation watcher to high speed
+     * @returns {undefined}
+     */
+    startCalibration(){
+        this.calibrationEnabled = true;
+        this.reinitGeolocationWatcher();
+    }
+
+    /**
+     * Finishes the calibration process and resets geolocation watcher
+     * @returns {undefined}
+     */
+    endCalibration(){
+        this.calibrationEnabled = false;
+        this.reinitGeolocationWatcher();
+        if (this.usefulLocationEventCount &gt; 0)
+        {
+            if ((this.bearingData.some(e =&gt; e &lt; 45) &amp;&amp; this.bearingData.some(e =&gt; e &gt; 315)) 
+                || (this.headingData.some(e =&gt; e &lt; 45) &amp;&amp; this.bearingData.some(e =&gt; e &gt; 315)))
+            {
+                this.postProcessCalibrationData();
+            }
+            this.relativeAdjust = this.normalizeBearing(this.bearingData.mean() - this.headingData.mean());
+        }
+    }
+
+    /**
+     * Processes calibration data so that problems with overroll around north are eliminated
+     * @returns {Number[]} Processed data
+     */
+    postProcessCalibrationData(){
+        this.bearingData.forEach((el, id, arr) =&gt; {
+            if (el &lt; 45){
+                el += 360;
+            }
+            arr[id] = el;
+        });
+
+        this.headingData.forEach((el, id, arr) =&gt; {
+            if (el &lt; 45) {
+                el += 360;
+            }
+            arr[id] = el;
+        });
+    }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

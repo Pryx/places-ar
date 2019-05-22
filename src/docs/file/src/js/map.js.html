@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/js/map.js | places-ar</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="places-ar"><meta property="twitter:description" content="Vyhled&#xE1;v&#xE1;n&#xED; bod&#x16F; z&#xE1;jmu pomoc&#xED; roz&#x161;&#xED;&#x159;en&#xE9; reality ve Va&#x161;em prohl&#xED;&#x17E;e&#x10D;i!"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Pryx/places-ar.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#js">js</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/compass.js~Compass.html">Compass</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/location.js~Location.html">Location</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/pid-controller.js~PID_Controller.html">PID_Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/position-service.js~PositionService.html">PositionService</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/settings.js~Settings.html">Settings</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/js/wizard.js~Wizard.html">Wizard</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-MAD">MAD</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/js/map.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Location } from &apos;./location&apos;;
+
+
+/**
+ * This class encapsulates Google Maps and everything related to it. 
+ * Meant to make it easier in case we decide to go with another provider.
+ */
+export class Map{
+    /**
+     * Constructor initializes map from the map provider (Google Maps) and ad
+     * @param {Function} callback Callback for when user select different POI
+     */
+    constructor(callback){
+        let origin = { lat: 50.0755381, lng: 14.4378005 };
+
+        let map = new google.maps.Map(document.getElementById(&apos;map&apos;), {
+            zoom: 14,
+            center: origin,
+            fullscreenControl: false,
+            mapTypeControl: false,
+            streetViewControl: false
+        });
+
+        this.map = map;
+        let temporary = new Location();
+
+        /**
+         * Creates new MapEventHandler for Google Maps
+         * @param {google.maps.Map} map Google Map instance
+         * @param {Object} origin Location
+         * @returns {undefined}
+         */
+        let MapEventHandler = function (map, origin) {
+            this.origin = origin;
+            this.map = map;
+            this.placesService = new google.maps.places.PlacesService(map);
+            this.elevator = new google.maps.ElevationService;
+
+            this.infowindow = new google.maps.InfoWindow;
+            this.infowindowContent = document.getElementById(&apos;infowindow-content&apos;);
+            this.infowindow.setContent(this.infowindowContent);
+            
+            var card = document.getElementById(&apos;pac-card&apos;);
+            var input = document.getElementById(&apos;pac-input&apos;);
+
+            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+            this.searchBox = new google.maps.places.SearchBox(input);
+
+            this.searchBox.bindTo(&apos;bounds&apos;, map);
+
+            this.searchBox.addListener(&apos;places_changed&apos;, () =&gt; this.placesChanged());
+
+            // Listen for clicks on the map.
+            this.map.addListener(&apos;click&apos;, this.handleClick.bind(this));
+        };
+
+        MapEventHandler.prototype.handleClick = function (event) {
+            google.maps.event.trigger(this.map, &quot;resize&quot;);
+            document.getElementById(&quot;place-select&quot;).focus();
+            if (event.placeId) {
+                event.stop();
+                this.getPlaceInformation(event.placeId);
+            }
+        };
+
+        MapEventHandler.prototype.getPlaceInformation = function (placeId) {
+            let me = this;
+            this.placesService.getDetails({ placeId: placeId }, function (place, status) {
+                if (status === &apos;OK&apos;) {
+                    temporary.longitude = place.geometry.location.lng();
+                    temporary.latitude = place.geometry.location.lat();
+                    temporary.name = place.name;
+
+                    me.infowindow.close();
+                    me.infowindow.setPosition(place.geometry.location);
+                    me.infowindowContent.children[&apos;place-icon&apos;].src = place.icon;
+                    me.infowindowContent.children[&apos;place-name&apos;].textContent = place.name;
+                    me.infowindowContent.children[&apos;place-address&apos;].textContent = place.formatted_address;
+                    me.infowindow.open(me.map);
+
+                    me.elevator.getElevationForLocations({
+                        &apos;locations&apos;: [place.geometry.location]
+                    }, function (results, st) {
+                        if (st === &apos;OK&apos;) {
+                            if (results[0]) {
+                                temporary.ele = results[0].elevation;
+
+                            } else {
+                                console.warn(&apos;No results found&apos;);
+                            }
+                        } else {
+                            console.error(&apos;Elevation service failed due to: &apos; + st);
+                        }
+                    });
+
+                }
+            });
+        };
+
+        MapEventHandler.prototype.placesChanged = function () {
+            let me = this;
+            me.infowindow.close();
+            let exit = false;
+
+            var places = this.autocomplete.getPlaces();
+            places.forEach(function (place) {
+                if (exit){
+                    return;
+                }
+                if (!place.geometry) {
+                    console.warn(`No geometry for ${place.name}`);
+                    return;
+                }
+
+                if (place.geometry.viewport) {
+                    me.map.fitBounds(place.geometry.viewport);
+                } else {
+                    me.map.setCenter(place.geometry.location);
+                    me.map.setZoom(17);  // Why 17? Because it looks good.
+                }
+
+                temporary.longitude = place.geometry.location.lng();
+                temporary.latitude = place.geometry.location.lat();
+                temporary.name = place.name;
+
+                me.infowindow.close();
+                me.infowindow.setPosition(place.geometry.location);
+                me.infowindowContent.children[&apos;place-icon&apos;].src = place.icon;
+                me.infowindowContent.children[&apos;place-name&apos;].textContent = place.name;
+                me.infowindowContent.children[&apos;place-address&apos;].textContent = place.formatted_address;
+                me.infowindow.open(me.map);
+                google.maps.event.trigger(me.map, &quot;resize&quot;);
+                exit = true;
+            });
+        };
+
+        this.mapEventHandler = new MapEventHandler(this.map, origin);
+        // Disabled because the package doesn&apos;t export GeolocationMarker, so can&apos;t use that
+        require(&apos;geolocation-marker&apos;);
+        this.geoMarker = new GeolocationMarker(this.map);
+
+        document.querySelector(&quot;#infowindow-content .btn&quot;).addEventListener(&quot;click&quot;, function () {
+            document.querySelector(&quot;body&quot;).classList.remove(&quot;hide-controls&quot;);
+            document.getElementById(&quot;close-all&quot;).classList.add(&quot;hide&quot;);
+            document.getElementById(&quot;place-select&quot;).classList.add(&quot;hide&quot;);
+            callback(temporary);
+        }); 
+    }
+    
+    /**
+     * Moves the center of the map to keep track of the user
+     * @param {Position} center Position
+     * @returns {undefined}
+     */
+    setCenter(center){
+        console.info(&quot;Setting center&quot;, center);
+        this.map.setCenter(center);
+    }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

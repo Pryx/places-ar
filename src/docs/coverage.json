@@ -1,0 +1,120 @@
+{
+  "coverage": "47.36%",
+  "expectCount": 114,
+  "actualCount": 54,
+  "files": {
+    "src/js/compass.js": {
+      "expectCount": 14,
+      "actualCount": 6,
+      "undocumentLines": [
+        13,
+        14,
+        24,
+        25,
+        26,
+        27,
+        29,
+        30
+      ]
+    },
+    "src/js/location.js": {
+      "expectCount": 9,
+      "actualCount": 2,
+      "undocumentLines": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "src/js/main.js": {
+      "expectCount": 9,
+      "actualCount": 6,
+      "undocumentLines": [
+        17,
+        20,
+        43
+      ]
+    },
+    "src/js/map.js": {
+      "expectCount": 12,
+      "actualCount": 3,
+      "undocumentLines": [
+        24,
+        34,
+        36,
+        37,
+        39,
+        40,
+        48,
+        138,
+        141
+      ]
+    },
+    "src/js/pid-controller.js": {
+      "expectCount": 16,
+      "actualCount": 5,
+      "undocumentLines": [
+        15,
+        16,
+        17,
+        18,
+        20,
+        21,
+        23,
+        24,
+        25,
+        35,
+        36
+      ]
+    },
+    "src/js/position-service.js": {
+      "expectCount": 33,
+      "actualCount": 18,
+      "undocumentLines": [
+        34,
+        35,
+        43,
+        55,
+        56,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        68,
+        78,
+        87
+      ]
+    },
+    "src/js/settings.js": {
+      "expectCount": 6,
+      "actualCount": 5,
+      "undocumentLines": [
+        11
+      ]
+    },
+    "src/js/stat_tools.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/js/wizard.js": {
+      "expectCount": 11,
+      "actualCount": 5,
+      "undocumentLines": [
+        12,
+        13,
+        14,
+        15,
+        17,
+        25
+      ]
+    }
+  }
+}

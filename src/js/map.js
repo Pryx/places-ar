@@ -45,14 +45,11 @@ export class Map{
 
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
 
-            this.autocomplete = new google.maps.places.SearchBox(input);
-            
-            // Bind the map's bounds (viewport) property to the autocomplete object,
-            // so that the autocomplete requests use the current map bounds for the
-            // bounds option in the request.
-            this.autocomplete.bindTo('bounds', map);
+            this.searchBox = new google.maps.places.SearchBox(input);
 
-            this.autocomplete.addListener('places_changed', () => this.placesChanged());
+            this.searchBox.bindTo('bounds', map);
+
+            this.searchBox.addListener('places_changed', () => this.placesChanged());
 
             // Listen for clicks on the map.
             this.map.addListener('click', this.handleClick.bind(this));
