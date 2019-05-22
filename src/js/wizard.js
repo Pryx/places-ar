@@ -29,9 +29,14 @@ export class Wizard{
 
         elements.forEach(element => {
             element.addEventListener("click", function (e) {
+                let href = this.getAttribute("href");
+                if (href == "./"){
+                    wizard.finished();
+                    return;
+                }
+
                 e.preventDefault();
                 
-                let href = this.getAttribute("href");
                 let slide = this.closest(".slide");    
                 let action = slide.getAttribute("data-action");
 
@@ -56,7 +61,7 @@ export class Wizard{
                         break;
                 }
 
-                if (href == "#finish" || href == "./")
+                if (href == "#finish")
                 {
                     wizard.finished();
                     return false;
